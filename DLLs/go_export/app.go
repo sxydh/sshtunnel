@@ -20,6 +20,7 @@ type Msg struct {
 	Body string `json:"body"`
 }
 
+//export InitGoServer
 //goland:noinspection GoUnhandledErrorResult
 func InitGoServer() int {
 	/* 日志配置 */
