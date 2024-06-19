@@ -14,6 +14,8 @@ namespace sshtunnel.Forms
 
         /* Button */
         private Button switchButton;
+        private string switchButtonText = "Local To Remote";
+        private string switchButtonText2 = "Remote To Local";
         private Button execButton;
 
         /* Table */
@@ -58,10 +60,11 @@ namespace sshtunnel.Forms
             this.switchButton = new Button
             {
                 Name = "SwitchButton",
-                Text = "点我切换方向",
+                Text = this.switchButtonText,
                 Width = 200,
                 Height = 30,
             };
+            this.switchButton.Click += new EventHandler(HandleSwitchButtonClick);
             this.buttonPanel.Controls.Add(this.switchButton);
             this.execButton = new Button
             {
@@ -80,7 +83,7 @@ namespace sshtunnel.Forms
                 Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
             };
-            
+
             configGrid.DataSource = BuildConfigList();
             this.tablePanel.Controls.Add(configGrid);
 
@@ -93,6 +96,18 @@ namespace sshtunnel.Forms
             this.Controls.Add(this.buttonPanel);
 
             this.ResumeLayout(false);
+        }
+
+        private void HandleSwitchButtonClick(object sender, EventArgs e)
+        {
+            if (this.switchButton.Text == this.switchButtonText)
+            {
+                this.switchButton.Text = this.switchButtonText2;
+            }
+            else
+            {
+                this.switchButton.Text = this.switchButtonText;
+            }
         }
 
         private void HandleExecButtonClick(object sender, EventArgs e)
