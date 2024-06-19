@@ -86,8 +86,8 @@ namespace sshtunnel.Forms
                 Height = 30,
                 Visible = false,
             };
-            execButton.Click += new System.EventHandler(HandleStopButtonClick);
-            buttonPanel.Controls.Add(execButton);
+            stopButton.Click += new System.EventHandler(HandleStopButtonClick);
+            buttonPanel.Controls.Add(stopButton);
 
             /* Table */
             tunnelTable = new DataGridView
