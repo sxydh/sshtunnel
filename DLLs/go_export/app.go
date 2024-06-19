@@ -42,7 +42,8 @@ func InitGoServer() int {
 	/* 用于和 C# 交换数据的 TCP 服务 */
 	var tcpServer tcp_utils.TcpServer
 	var conn *net.Conn
-	isTunneling := false
+	var tunnels []*ssh_utils.Tunnel
+
 	tcpServer = tcp_utils.TcpServer{}
 	tcpServer.OnConn = func(c *net.Conn) {
 		conn = c
@@ -51,14 +52,17 @@ func InitGoServer() int {
 		var msg Msg
 		json.Unmarshal([]byte(m), &msg)
 		/* 构建 SSH 反向隧道 */
-		if msg.Flag == "NewReverseTunnel" && !isTunneling {
-			var tunnels []*ssh_utils.Tunnel
-			json.Unmarshal([]byte(msg.Body), &tunnels)
-			go func() {
-				ssh_utils.NewReverseTunnel(&tunnels)
-			}()
-			isTunneling = true
-			tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
+		switch msg.Flag {
+		case "NewReverseTunnel":
+			if len(tunnels) == 0 {
+				json.Unmarshal([]byte(msg.Body), &tunnels)
+				go func() {
+					ssh_utils.NewReverseTunnel(&tunnels)
+				}()
+				tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
+			}
+		case "StopTunnel":
+			ssh_utils.StopTunnel(&tunnels)
 		}
 	}
 	port := tcpServer.RandPort()
