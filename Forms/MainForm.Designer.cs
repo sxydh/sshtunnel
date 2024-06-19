@@ -1,5 +1,7 @@
-﻿using System;
-using System.Data;
+﻿using Newtonsoft.Json;
+using sshtunnel.Models;
+using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
@@ -19,11 +21,8 @@ namespace sshtunnel.Forms
         private Button execButton;
 
         /* Table */
-        private DataGridView configGrid;
-        // Local to remote config list
-        private DataTable configList;
-        // Remote to local config list
-        private DataTable reverseConfigList;
+        private DataGridView tunnelTable;
+        private BindingList<Tunnel> tunnelList;
 
         protected override void Dispose(bool disposing)
         {
@@ -40,16 +39,17 @@ namespace sshtunnel.Forms
              * 先 SuspendLayout 之后再 ResumeLayout 
              * 该步骤可以减少重绘以优化性能
              */
-            this.SuspendLayout();
+            SuspendLayout();
 
             /* Panel */
-            this.buttonPanel = new System.Windows.Forms.FlowLayoutPanel
+            buttonPanel = new System.Windows.Forms.FlowLayoutPanel
             {
                 Name = "ButtonPanel",
                 Dock = DockStyle.Top,
                 Height = 50,
             };
-            this.tablePanel = new System.Windows.Forms.Panel
+
+            tablePanel = new System.Windows.Forms.Panel
             {
                 Name = "TablePanel",
                 Dock = DockStyle.Fill,
@@ -57,81 +57,64 @@ namespace sshtunnel.Forms
             };
 
             /* Button */
-            this.switchButton = new Button
+            switchButton = new Button
             {
                 Name = "SwitchButton",
-                Text = this.switchButtonText,
+                Text = switchButtonText,
                 Width = 200,
                 Height = 30,
             };
-            this.switchButton.Click += new EventHandler(HandleSwitchButtonClick);
-            this.buttonPanel.Controls.Add(this.switchButton);
-            this.execButton = new Button
+            switchButton.Click += new EventHandler(HandleSwitchButtonClick);
+            buttonPanel.Controls.Add(switchButton);
+
+            execButton = new Button
             {
                 Name = "ExecButton",
                 Text = "执行",
                 Width = 100,
                 Height = 30,
             };
-            this.execButton.Click += new System.EventHandler(HandleExecButtonClick);
-            this.buttonPanel.Controls.Add(this.execButton);
+            execButton.Click += new System.EventHandler(HandleExecButtonClick);
+            buttonPanel.Controls.Add(execButton);
 
             /* Table */
-            this.configGrid = new DataGridView
+            tunnelTable = new DataGridView
             {
-                Name = "ConfigGrid",
+                Name = "TunnelTable",
                 Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
             };
+            tunnelList = new BindingList<Tunnel>();
+            tunnelTable.DataSource = tunnelList;
+            tablePanel.Controls.Add(tunnelTable);
 
-            configGrid.DataSource = BuildConfigList();
-            this.tablePanel.Controls.Add(configGrid);
+            AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1000, 600);
+            Name = "MainForm";
+            Text = "SSH Tunnel";
+            Controls.Add(tablePanel);
+            Controls.Add(buttonPanel);
 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1000, 600);
-            this.Name = "MainForm";
-            this.Text = "SSH Tunnel";
-            this.Controls.Add(this.tablePanel);
-            this.Controls.Add(this.buttonPanel);
-
-            this.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         private void HandleSwitchButtonClick(object sender, EventArgs e)
         {
-            if (this.switchButton.Text == this.switchButtonText)
+            if (switchButton.Text == switchButtonText)
             {
-                this.switchButton.Text = this.switchButtonText2;
+                switchButton.Text = switchButtonText2;
             }
             else
             {
-                this.switchButton.Text = this.switchButtonText;
+                switchButton.Text = switchButtonText;
             }
         }
 
         private void HandleExecButtonClick(object sender, EventArgs e)
         {
-        }
-
-        private DataTable BuildConfigList()
-        {
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Local Port", typeof(string));
-            dataTable.Columns.Add("Target IP", typeof(string));
-            dataTable.Columns.Add("Target Port", typeof(string));
-            this.configList = dataTable;
-            return dataTable;
-        }
-
-        private DataTable BuildReverseConfigList()
-        {
-            DataTable dataTable = new DataTable();
-            dataTable.Columns.Add("Remote Port", typeof(string));
-            dataTable.Columns.Add("Target IP", typeof(string));
-            dataTable.Columns.Add("Target Port", typeof(string));
-            this.reverseConfigList = dataTable;
-            return dataTable;
+            string msg = JsonConvert.SerializeObject(tunnelList);
+            tcpHelper.Send(msg);
         }
 
     }
