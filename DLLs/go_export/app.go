@@ -35,7 +35,6 @@ func InitGoServer() int {
 	if err != nil {
 		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
 	}
-	defer file.Close()
 	writer := io.MultiWriter(os.Stdout, file)
 	log.SetOutput(writer)
 
