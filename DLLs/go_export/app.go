@@ -54,6 +54,7 @@ func InitGoServer() int {
 		switch msg.Flag {
 		/* 构建 SSH 隧道 */
 		case "NewTunnel":
+			log.Printf("NewTunnel: body=%v", msg.Body)
 			if len(tunnels) == 0 {
 				json.Unmarshal([]byte(msg.Body), &tunnels)
 				go func() {
@@ -63,6 +64,7 @@ func InitGoServer() int {
 			}
 		/* 构建 SSH 反向隧道 */
 		case "NewReverseTunnel":
+			log.Printf("NewReverseTunnel: body=%v", msg.Body)
 			if len(tunnels) == 0 {
 				json.Unmarshal([]byte(msg.Body), &tunnels)
 				go func() {
@@ -72,6 +74,7 @@ func InitGoServer() int {
 			}
 		/* 关闭 SSH 隧道 */
 		case "StopTunnel":
+			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
 			ssh_utils.StopTunnel(&tunnels)
 			tunnels = tunnels[:0]
 		}
