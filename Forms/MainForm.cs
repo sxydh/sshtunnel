@@ -1,20 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
 {
     public partial class MainForm : Form
     {
+
+        private int goServerPort;
+
         public MainForm()
         {
+            /* 初始化 UI 组件 */
             InitializeComponent();
+
+            /* 初始化 GO 服务 */
+            goServerPort = InitGoServer();
         }
+
+        [DllImport("go_export.dll")]
+        public static extern int InitGoServer();
     }
 }
