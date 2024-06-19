@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"encoding/json"
 	"fmt"
 	"github.com/sxydh/mgo-util/json_utils"
