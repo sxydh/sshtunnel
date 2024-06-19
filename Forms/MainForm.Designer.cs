@@ -19,6 +19,7 @@ namespace sshtunnel.Forms
         private string tunnelText = "Local To Remote";
         private string reverseTunnelText = "Remote To Local";
         private Button execButton;
+        private Button stopButton;
 
         /* Table */
         private DataGridView tunnelTable;
@@ -77,6 +78,17 @@ namespace sshtunnel.Forms
             execButton.Click += new System.EventHandler(HandleExecButtonClick);
             buttonPanel.Controls.Add(execButton);
 
+            stopButton = new Button
+            {
+                Name = "StopButton",
+                Text = "Stop",
+                Width = 100,
+                Height = 30,
+                Visible = false,
+            };
+            execButton.Click += new System.EventHandler(HandleStopButtonClick);
+            buttonPanel.Controls.Add(execButton);
+
             /* Table */
             tunnelTable = new DataGridView
             {
@@ -128,6 +140,19 @@ namespace sshtunnel.Forms
                 Body = JsonConvert.SerializeObject(tunnelList)
             };
             tcpHelper.Send(JsonConvert.SerializeObject(msg));
+            execButton.Visible = false;
+            stopButton.Visible = true;
+        }
+
+        private void HandleStopButtonClick(object sender, EventArgs e)
+        {
+            Msg msg = new Msg
+            {
+                Flag = "StopTunnel",
+            };
+            tcpHelper.Send(JsonConvert.SerializeObject(msg));
+            execButton.Visible = true;
+            stopButton.Visible = false;
         }
 
     }
