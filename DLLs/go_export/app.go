@@ -51,8 +51,17 @@ func InitGoServer() int {
 	tcpServer.OnMessage = func(m string) {
 		var msg Msg
 		json.Unmarshal([]byte(m), &msg)
-		/* 构建 SSH 反向隧道 */
 		switch msg.Flag {
+		/* 构建 SSH 隧道 */
+		case "NewTunnel":
+			if len(tunnels) == 0 {
+				json.Unmarshal([]byte(msg.Body), &tunnels)
+				go func() {
+					ssh_utils.NewTunnel(&tunnels)
+				}()
+				tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
+			}
+		/* 构建 SSH 反向隧道 */
 		case "NewReverseTunnel":
 			if len(tunnels) == 0 {
 				json.Unmarshal([]byte(msg.Body), &tunnels)
@@ -61,8 +70,10 @@ func InitGoServer() int {
 				}()
 				tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
 			}
+		/* 关闭 SSH 隧道 */
 		case "StopTunnel":
 			ssh_utils.StopTunnel(&tunnels)
+			tunnels = tunnels[:0]
 		}
 	}
 	port := tcpServer.RandPort()
