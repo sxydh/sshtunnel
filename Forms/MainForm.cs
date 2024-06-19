@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using sshtunnel.Utils;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
@@ -6,7 +7,7 @@ namespace sshtunnel.Forms
     public partial class MainForm : Form
     {
 
-        private int goServerPort;
+        private TcpHelper tcpHelper;
 
         public MainForm()
         {
@@ -14,7 +15,10 @@ namespace sshtunnel.Forms
             InitializeComponent();
 
             /* 初始化 GO 服务 */
-            goServerPort = InitGoServer();
+            int goServerPort = InitGoServer();
+
+            /* 初始化 TCP 客户端 */
+            tcpHelper = TcpHelper.New(goServerPort);
         }
 
         [DllImport("go_export.dll")]
