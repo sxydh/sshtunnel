@@ -83,6 +83,11 @@ namespace sshtunnel.Forms
                 Name = "TunnelTable",
                 Dock = DockStyle.Fill,
                 AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                ColumnHeadersHeight = 50,
+                RowTemplate = new DataGridViewRow
+                {
+                    Height = 40,
+                }
             };
             tunnelList = new BindingList<Tunnel>();
             tunnelTable.DataSource = tunnelList;
@@ -90,7 +95,7 @@ namespace sshtunnel.Forms
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1000, 600);
+            ClientSize = new System.Drawing.Size(1200, 600);
             Name = "MainForm";
             Text = "SSH Tunnel";
             Controls.Add(tablePanel);
