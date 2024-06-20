@@ -35,8 +35,11 @@ func (t *NetHook) Fire(entry *logrus.Entry) error {
 func init() {
 	/* 日志配置 */
 	logger = logrus.New()
+	logPath := "./logs"
+	_ = os.Mkdir(logPath, os.ModePerm)
+	logPath += "/" + time.Now().Format("2006-01-02") + ".go_export.log"
 	file, err := os.OpenFile(
-		"logs/"+time.Now().Format("2006-01-02")+".go_export.log",
+		logPath,
 		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
 		os.ModePerm)
 	if err != nil {
