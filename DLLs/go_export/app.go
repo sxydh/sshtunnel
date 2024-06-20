@@ -57,23 +57,23 @@ func InitGoServer() int {
 		/* 构建 SSH 隧道 */
 		case "NewTunnel":
 			log.Printf("NewTunnel: body=%v", msg.Body)
-			if len(tunnels) == 0 {
-				json.Unmarshal([]byte(msg.Body), &tunnels)
-				go func() {
-					ssh_utils.NewTunnel(&tunnels)
-				}()
-				tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
-			}
+			var tl []*ssh_utils.Tunnel
+			json.Unmarshal([]byte(msg.Body), &tl)
+			go func() {
+				ssh_utils.NewTunnel(&tl)
+			}()
+			tunnels = append(tunnels, tl...)
+			tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
 		/* 构建 SSH 反向隧道 */
 		case "NewReverseTunnel":
 			log.Printf("NewReverseTunnel: body=%v", msg.Body)
-			if len(tunnels) == 0 {
-				json.Unmarshal([]byte(msg.Body), &tunnels)
-				go func() {
-					ssh_utils.NewReverseTunnel(&tunnels)
-				}()
-				tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
-			}
+			var tl []*ssh_utils.Tunnel
+			json.Unmarshal([]byte(msg.Body), &tl)
+			go func() {
+				ssh_utils.NewReverseTunnel(&tl)
+			}()
+			tunnels = append(tunnels, tl...)
+			tcpServer.Send(conn, json_utils.ToJsonStr(Msg{Flag: msg.Flag, Body: "1"}))
 		/* 关闭 SSH 隧道 */
 		case "StopTunnel":
 			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
