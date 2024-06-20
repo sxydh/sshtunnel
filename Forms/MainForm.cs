@@ -22,6 +22,9 @@ namespace sshtunnel.Forms
 
             /* 初始化日志数据源 */
             InitLogSource();
+
+            /* 关闭回调 */
+            FormClosing += new FormClosingEventHandler(OnFormClosing);
         }
 
         [DllImport("go_export.dll")]

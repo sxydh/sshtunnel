@@ -1,7 +1,10 @@
 ﻿using Newtonsoft.Json;
 using sshtunnel.Models;
+using sshtunnel.Utils;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -24,6 +27,9 @@ namespace sshtunnel.Forms
 
         /* LogView */
         private ListView logView;
+
+        /* Other */
+        private FileHelper fileHelper = FileHelper.New("./sshtunnel.config");
 
         protected override void Dispose(bool disposing)
         {
@@ -114,6 +120,7 @@ namespace sshtunnel.Forms
                 // BackgroundColor = System.Drawing.Color.Beige
             };
             tunnelList = new BindingList<Tunnel>();
+            InitTunnelList(tunnelList);
             tunnelTable.DataSource = tunnelList;
             panel.Controls.Add(tunnelTable, 0, 1);
 
@@ -139,6 +146,20 @@ namespace sshtunnel.Forms
             Controls.Add(panel);
 
             ResumeLayout(false);
+        }
+
+        private void InitTunnelList(BindingList<Tunnel> tlb)
+        {
+            string str = fileHelper.R();
+            if (string.IsNullOrEmpty(str))
+            {
+                return;
+            }
+            List<Tunnel> tl = JsonConvert.DeserializeObject<List<Tunnel>>(str);
+            foreach (var t in tl)
+            {
+                tlb.Add(t);
+            }
         }
 
         private void InitLogSource()
@@ -203,6 +224,12 @@ namespace sshtunnel.Forms
             tcpHelper.Send(JsonConvert.SerializeObject(msg));
             execButton.Visible = true;
             stopButton.Visible = false;
+        }
+
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
+        {
+            List<Tunnel> tl = tunnelList.ToList();
+            fileHelper.W(JsonConvert.SerializeObject(tl));
         }
 
     }
