@@ -1,9 +1,18 @@
-﻿using System.Windows.Forms;
+﻿using System.Reflection;
+using System;
+using System.Windows.Forms;
 
 namespace sshtunnel.Forms
 {
     public class MyListView : ListView
     {
+
+        public MyListView()
+        {
+            Type type = GetType();
+            PropertyInfo pi = type.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            pi.SetValue(this, true, null);
+        }
 
         protected override CreateParams CreateParams
         {
