@@ -25,6 +25,9 @@ namespace sshtunnel.Forms
         private DataGridView tunnelTable;
         private BindingList<Tunnel> tunnelList;
 
+        /* Log */
+        private ListView logView;
+
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -105,6 +108,9 @@ namespace sshtunnel.Forms
             tunnelTable.DataSource = tunnelList;
             tablePanel.Controls.Add(tunnelTable);
 
+            /* Log */
+            logView = new ListView();
+
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1200, 600);
@@ -114,6 +120,15 @@ namespace sshtunnel.Forms
             Controls.Add(buttonPanel);
 
             ResumeLayout(false);
+        }
+
+        private void InitLogSource()
+        {
+            Action<string> action = value =>
+            {
+                logView.Items.Add(value);
+            };
+            tcpHelper.OnMsg(new Utils.TcpHelper.MsgHandler(action));
         }
 
         private void HandleSwitchButtonClick(object sender, EventArgs e)

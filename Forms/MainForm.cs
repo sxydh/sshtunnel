@@ -19,6 +19,9 @@ namespace sshtunnel.Forms
 
             /* 初始化 TCP 客户端 */
             tcpHelper = TcpHelper.New(goServerPort);
+
+            /* 初始化日志数据源 */
+            InitLogSource();
         }
 
         [DllImport("go_export.dll")]
