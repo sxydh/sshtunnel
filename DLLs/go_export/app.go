@@ -24,6 +24,11 @@ type Msg struct {
 //export InitGoServer
 //goland:noinspection GoUnhandledErrorResult
 func InitGoServer() int {
+	/* 用于和 C# 交换数据的 TCP 服务 */
+	var tcpServer tcp_utils.TcpServer
+	var conn *net.Conn
+	var tunnels []*ssh_utils.Tunnel
+
 	/* 日志配置 */
 	// 输出日期和时间
 	log.SetFlags(log.Ldate | log.Ltime)
@@ -37,11 +42,6 @@ func InitGoServer() int {
 	}
 	writer := io.MultiWriter(os.Stdout, file)
 	log.SetOutput(writer)
-
-	/* 用于和 C# 交换数据的 TCP 服务 */
-	var tcpServer tcp_utils.TcpServer
-	var conn *net.Conn
-	var tunnels []*ssh_utils.Tunnel
 
 	tcpServer = tcp_utils.TcpServer{}
 	tcpServer.OnConn = func(c *net.Conn) {
