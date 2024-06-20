@@ -60,7 +60,7 @@ namespace sshtunnel.Forms
                 },
                 RowStyles = {
                     new RowStyle(SizeType.Absolute, 50),
-                    new RowStyle(SizeType.AutoSize),
+                    new RowStyle(SizeType.Absolute, 400),
                     new RowStyle(SizeType.Percent, 100)
                 },
                 // BackColor = System.Drawing.Color.Blue
@@ -140,7 +140,7 @@ namespace sshtunnel.Forms
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1200, 600);
+            ClientSize = new System.Drawing.Size(1200, 800);
             Name = "MainForm";
             Text = "SSH Tunnel";
             Controls.Add(panel);
