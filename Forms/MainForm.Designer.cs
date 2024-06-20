@@ -108,6 +108,7 @@ namespace sshtunnel.Forms
                 // BackColor = System.Drawing.Color.Chocolate
             };
             logView.View = View.Details;
+            logView.HeaderStyle = ColumnHeaderStyle.None;
             logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
             InitLogSource();
             panel.Controls.Add(logView, 0, 2);
