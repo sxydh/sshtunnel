@@ -197,7 +197,7 @@ namespace sshtunnel.Forms
             {
                 Msg msg = new Msg
                 {
-                    Flag = "NewTunnel",
+                    Flag = "NewReverseTunnel",
                     Body = JsonConvert.SerializeObject(tln)
                 };
                 tcpHelper.Send(JsonConvert.SerializeObject(msg));
