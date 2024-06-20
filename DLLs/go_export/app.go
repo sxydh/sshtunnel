@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	i, _ := strconv.Atoi(os.Args[0])
+	i, _ := strconv.Atoi(os.Args[1])
 	InitGoServer(i)
 }
 
@@ -83,6 +83,8 @@ func InitGoServer(port int) {
 		}
 	}
 	tcpServer.Port(port)
+	done := make(chan int)
+	<-done
 }
 
 type logConnWriter struct {
