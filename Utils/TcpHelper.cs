@@ -1,5 +1,7 @@
-﻿using System.Net.Sockets;
+﻿using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace sshtunnel.Utils
 {
@@ -9,6 +11,8 @@ namespace sshtunnel.Utils
 
         private TcpClient client;
         private NetworkStream stream;
+        private List<MsgHandler> msgHandlers;
+        public delegate void MsgHandler(string msg);
 
         private TcpHelper() { }
 
@@ -19,6 +23,23 @@ namespace sshtunnel.Utils
                 client = new TcpClient("127.0.0.1", port)
             };
             tcpHelper.stream = tcpHelper.client.GetStream();
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    byte[] bytes = new byte[4];
+                    tcpHelper.stream.Read(bytes, 0, bytes.Length);
+                    bytes = new byte[ByteHelper.Byte4ToInt(bytes)];
+                    tcpHelper.stream.Read(bytes, 0, bytes.Length);
+                    string msg = Encoding.UTF8.GetString(bytes);
+                    foreach (var msgHandler in tcpHelper.msgHandlers)
+                    {
+                        msgHandler.Invoke(msg);
+                    }
+                }
+            });
+
             return tcpHelper;
         }
 
@@ -29,6 +50,11 @@ namespace sshtunnel.Utils
             stream.Write(ByteHelper.Bytes4(bytes.Length), 0, 4);
             bytes = Encoding.UTF8.GetBytes(msg);
             stream.Write(bytes, 0, bytes.Length);
+        }
+
+        public void OnMsg(MsgHandler msgHandler)
+        {
+            msgHandlers.Add(msgHandler);
         }
 
     }
