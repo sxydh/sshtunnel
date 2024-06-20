@@ -5,10 +5,9 @@ import (
 	"bufio"
 	"encoding/binary"
 	"encoding/json"
-	"fmt"
+	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 	"io"
-	"log"
 	"math/rand"
 	"net"
 	"os"
@@ -20,6 +19,12 @@ import (
 )
 
 func main() {}
+
+var logger logrus.Logger
+
+func init() {
+
+}
 
 type Msg struct {
 	Flag string `json:"flag"`
@@ -34,25 +39,9 @@ func InitGoServer() int {
 	var conn *net.Conn
 	var tunnels []*Tunnel
 
-	// 输出日期和时间
-	log.SetFlags(log.Ldate | log.Ltime)
-	// 输出到控制台和文件
-	logPath := "./logs"
-	_ = os.Mkdir(logPath, os.ModePerm)
-	logPath += "/" + time.Now().Format("2006-01-02") + ".go_export.log"
-	file, err := os.OpenFile(logPath, os.O_CREATE|os.O_APPEND|os.O_RDWR, os.ModePerm)
-	if err != nil {
-		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
-	}
-	lcw := &logConnWriter{}
-	writer := io.MultiWriter(os.Stdout, file, lcw)
-	log.SetOutput(writer)
-
 	tcpServer = TcpServer{}
 	tcpServer.OnConn = func(c *net.Conn) {
 		conn = c
-		lcw.tcpServer = &tcpServer
-		lcw.conn = c
 	}
 	tcpServer.OnMessage = func(m string) {
 		var msg Msg
@@ -60,7 +49,7 @@ func InitGoServer() int {
 		switch msg.Flag {
 		/* 构建 SSH 隧道 */
 		case "NewTunnel":
-			log.Printf("NewTunnel: body=%v", msg.Body)
+			logger.Printf("NewTunnel: body=%v", msg.Body)
 			if len(tunnels) == 0 {
 				json.Unmarshal([]byte(msg.Body), &tunnels)
 				go func() {
@@ -70,7 +59,7 @@ func InitGoServer() int {
 			}
 		/* 构建 SSH 反向隧道 */
 		case "NewReverseTunnel":
-			log.Printf("NewReverseTunnel: body=%v", msg.Body)
+			logger.Printf("NewReverseTunnel: body=%v", msg.Body)
 			if len(tunnels) == 0 {
 				json.Unmarshal([]byte(msg.Body), &tunnels)
 				go func() {
@@ -80,7 +69,7 @@ func InitGoServer() int {
 			}
 		/* 关闭 SSH 隧道 */
 		case "StopTunnel":
-			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
+			logger.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
 			StopTunnel(&tunnels)
 			tunnels = tunnels[:0]
 		}
@@ -118,7 +107,7 @@ func ToJsonStr(p interface{}) string {
 	}
 	bytes, err := json.Marshal(v.Interface())
 	if err != nil {
-		log.Printf("Marshal traverses error: err=%v", err)
+		logger.Printf("Marshal traverses error: err=%v", err)
 		return empty
 	}
 	return string(bytes)
@@ -155,15 +144,15 @@ func StopTunnel(tunnels *[]*Tunnel) {
 		tunnel.Delete = 1
 		err := (*tunnel.Listener).Close()
 		if err != nil {
-			log.Printf("Close listener error: config=%v, err=%v", ToJsonStr(*tunnel), err)
+			logger.Printf("Close listener error: config=%v, err=%v", ToJsonStr(*tunnel), err)
 		} else {
-			log.Printf("Close listener: config=%v", ToJsonStr(*tunnel))
+			logger.Printf("Close listener: config=%v", ToJsonStr(*tunnel))
 		}
 		err = tunnel.SshClient.Close()
 		if err != nil {
-			log.Printf("Close ssh client error: config=%v, err=%v", ToJsonStr(*tunnel), err)
+			logger.Printf("Close ssh client error: config=%v, err=%v", ToJsonStr(*tunnel), err)
 		} else {
-			log.Printf("Close ssh client: config=%v", ToJsonStr(*tunnel))
+			logger.Printf("Close ssh client: config=%v", ToJsonStr(*tunnel))
 		}
 	}
 }
@@ -210,12 +199,12 @@ func tunnelSSHDial(tunnel *Tunnel) error {
 	privateKeyPath := filepath.Join(userHomeDir, ".ssh", "id_rsa")
 	privateKeyBytes, err := os.ReadFile(privateKeyPath)
 	if err != nil {
-		log.Printf("Read ssh private key file error: privateKeyPath=%v, err=%v", privateKeyPath, err)
+		logger.Printf("Read ssh private key file error: privateKeyPath=%v, err=%v", privateKeyPath, err)
 		return err
 	}
 	privateKey, err := ssh.ParsePrivateKey(privateKeyBytes)
 	if err != nil {
-		log.Printf("Parse ssh private key error: privateKeyPath=%v, err=%v", privateKeyPath, err)
+		logger.Printf("Parse ssh private key error: privateKeyPath=%v, err=%v", privateKeyPath, err)
 	}
 
 	clientConfig := &ssh.ClientConfig{
@@ -229,10 +218,10 @@ func tunnelSSHDial(tunnel *Tunnel) error {
 
 	sshClient, err := ssh.Dial("tcp", tunnel.SSHIp+":"+strconv.Itoa(tunnel.SSHPort), clientConfig)
 	if err != nil {
-		log.Printf("Dial tcp to ssh host error: config=%v, err=%v", ToJsonStr(tunnel), err)
+		logger.Printf("Dial tcp to ssh host error: config=%v, err=%v", ToJsonStr(tunnel), err)
 		return err
 	}
-	log.Printf("Dial tcp to ssh host: config=%v", ToJsonStr(tunnel))
+	logger.Printf("Dial tcp to ssh host: config=%v", ToJsonStr(tunnel))
 	tunnel.SshClient = sshClient
 	return nil
 }
@@ -243,10 +232,10 @@ func tunnelAccept(tunnel *Tunnel) {
 	listener, err := net.Listen("tcp", "localhost:"+strconv.Itoa(tunnel.ListenPort))
 	if err != nil {
 		_ = sshClient.Close()
-		log.Printf("Listen tcp to local host error: config=%v, err=%v", ToJsonStr(tunnel), err)
+		logger.Printf("Listen tcp to local host error: config=%v, err=%v", ToJsonStr(tunnel), err)
 		return
 	}
-	log.Printf("Listening tcp to local host: config=%v", ToJsonStr(tunnel))
+	logger.Printf("Listening tcp to local host: config=%v", ToJsonStr(tunnel))
 	tunnel.Listener = &listener
 	defer listener.Close()
 	defer sshClient.Close()
@@ -257,12 +246,12 @@ func tunnelAccept(tunnel *Tunnel) {
 		}
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Printf("Accept user connection error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Accept user connection error: config=%v, err=%v", ToJsonStr(tunnel), err)
 			return
 		}
 		targetConn, err := sshClient.Dial("tcp", tunnel.TargetIp+":"+strconv.Itoa(tunnel.TargetPort))
 		if err != nil {
-			log.Printf("Dial tcp to target host error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Dial tcp to target host error: config=%v, err=%v", ToJsonStr(tunnel), err)
 			return
 		}
 		go tunnelConnectionRelay(tunnel, &targetConn, &conn)
@@ -275,10 +264,10 @@ func reverseTunnelAccept(tunnel *Tunnel) {
 	listener, err := sshClient.Listen("tcp", "localhost:"+strconv.Itoa(tunnel.ListenPort))
 	if err != nil {
 		_ = sshClient.Close()
-		log.Printf("Listen tcp to ssh host error: config=%v, err=%v", ToJsonStr(tunnel), err)
+		logger.Printf("Listen tcp to ssh host error: config=%v, err=%v", ToJsonStr(tunnel), err)
 		return
 	}
-	log.Printf("Listening tcp to ssh host: config=%v", ToJsonStr(tunnel))
+	logger.Printf("Listening tcp to ssh host: config=%v", ToJsonStr(tunnel))
 	tunnel.Listener = &listener
 	defer listener.Close()
 	defer sshClient.Close()
@@ -289,12 +278,12 @@ func reverseTunnelAccept(tunnel *Tunnel) {
 		}
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Printf("Accept user connection error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Accept user connection error: config=%v, err=%v", ToJsonStr(tunnel), err)
 			return
 		}
 		targetConn, err := net.Dial("tcp", tunnel.TargetIp+":"+strconv.Itoa(tunnel.TargetPort))
 		if err != nil {
-			log.Printf("Dial tcp to target host error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Dial tcp to target host error: config=%v, err=%v", ToJsonStr(tunnel), err)
 			return
 		}
 		go tunnelConnectionRelay(tunnel, &targetConn, &conn)
@@ -312,14 +301,14 @@ func tunnelConnectionRelay(tunnel *Tunnel, targetConn *net.Conn, conn *net.Conn)
 	go func() {
 		_, err := io.Copy(*targetConn, *conn)
 		if err != nil {
-			log.Printf("Copy user to target error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Copy user to target error: config=%v, err=%v", ToJsonStr(tunnel), err)
 		}
 		wg.Done()
 	}()
 	go func() {
 		_, err := io.Copy(*conn, *targetConn)
 		if err != nil {
-			log.Printf("Copy target to user error: config=%v, err=%v", ToJsonStr(tunnel), err)
+			logger.Printf("Copy target to user error: config=%v, err=%v", ToJsonStr(tunnel), err)
 		}
 		wg.Done()
 	}()
@@ -336,14 +325,14 @@ func tunnelKeepalive(doingTunnels *chan *Tunnel, todoTunnels *chan *Tunnel) {
 		go func() {
 			session, err := checkTunnel.SshClient.NewSession()
 			if err != nil {
-				log.Printf("NewSession error: tunnel=%v, err=%v", ToJsonStr(checkTunnel), err)
+				logger.Printf("NewSession error: tunnel=%v, err=%v", ToJsonStr(checkTunnel), err)
 				checkTunnel.Status = 0
 				*todoTunnels <- checkTunnel
 				return
 			}
 			_, err = session.CombinedOutput("echo 1")
 			if err != nil {
-				log.Printf("CombinedOutput error: tunnel=%v, err=%v", ToJsonStr(checkTunnel), err)
+				logger.Printf("CombinedOutput error: tunnel=%v, err=%v", ToJsonStr(checkTunnel), err)
 				checkTunnel.Status = 0
 				*todoTunnels <- checkTunnel
 				return
@@ -378,21 +367,21 @@ func (server *TcpServer) RandPort() int {
 func (server *TcpServer) Port(port int) error {
 	listener, err := net.Listen("tcp", "127.0.0.1:"+strconv.Itoa(port))
 	if err != nil {
-		log.Printf("Listen on port for tcp error: port=%v, err=%v", port, err)
+		logger.Printf("Listen on port for tcp error: port=%v, err=%v", port, err)
 		return err
 	}
-	log.Printf("Listening for tcp: port=%v", port)
+	logger.Printf("Listening for tcp: port=%v", port)
 
 	go func() {
 		defer listener.Close()
 		for {
 			conn, err := listener.Accept()
 			if err != nil {
-				log.Printf("Accept connection error: port=%v, err=%v", port, err)
+				logger.Printf("Accept connection error: port=%v, err=%v", port, err)
 				return
 			}
 			server.OnConn(&conn)
-			log.Printf("Accepting connection: localAddr=%v, remoteAddr=%v", conn.LocalAddr(), conn.RemoteAddr())
+			logger.Printf("Accepting connection: localAddr=%v, remoteAddr=%v", conn.LocalAddr(), conn.RemoteAddr())
 
 			go func() {
 				defer conn.Close()
@@ -401,13 +390,13 @@ func (server *TcpServer) Port(port int) error {
 					bytes := make([]byte, 4)
 					_, err = io.ReadFull(reader, bytes)
 					if err != nil {
-						log.Printf("Read body length error, localAddr=%v, remoteAddr=%v, err=%v", conn.LocalAddr(), conn.RemoteAddr(), err)
+						logger.Printf("Read body length error, localAddr=%v, remoteAddr=%v, err=%v", conn.LocalAddr(), conn.RemoteAddr(), err)
 						return
 					}
 					bytes = make([]byte, binary.BigEndian.Uint32(bytes))
 					_, err = io.ReadFull(reader, bytes)
 					if err != nil {
-						log.Printf("Read body error, localAddr=%v, remoteAddr=%v, err=%v", conn.LocalAddr(), conn.RemoteAddr(), err)
+						logger.Printf("Read body error, localAddr=%v, remoteAddr=%v, err=%v", conn.LocalAddr(), conn.RemoteAddr(), err)
 						return
 					}
 					server.OnMessage(string(bytes))
@@ -426,12 +415,12 @@ func (server *TcpServer) Send(conn *net.Conn, msg string) error {
 	binary.BigEndian.PutUint32(bytes, uint32(len(msg)))
 	_, err := (*conn).Write(bytes)
 	if err != nil {
-		log.Printf("Write body length error: err=%v", err)
+		logger.Printf("Write body length error: err=%v", err)
 		return err
 	}
 	_, err = (*conn).Write([]byte(msg))
 	if err != nil {
-		log.Printf("Write body error: err=%v", err)
+		logger.Printf("Write body error: err=%v", err)
 		return err
 	}
 	return nil
