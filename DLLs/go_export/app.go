@@ -29,7 +29,6 @@ func InitGoServer() int {
 	var conn *net.Conn
 	var tunnels []*ssh_utils.Tunnel
 
-	/* 日志配置 */
 	// 输出日期和时间
 	log.SetFlags(log.Ldate | log.Ltime)
 	// 输出到控制台和文件
@@ -40,12 +39,15 @@ func InitGoServer() int {
 	if err != nil {
 		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
 	}
-	writer := io.MultiWriter(os.Stdout, file)
+	lcw := logConnWriter{}
+	writer := io.MultiWriter(os.Stdout, file, lcw)
 	log.SetOutput(writer)
 
 	tcpServer = tcp_utils.TcpServer{}
 	tcpServer.OnConn = func(c *net.Conn) {
 		conn = c
+		lcw.tcpServer = &tcpServer
+		lcw.conn = c
 	}
 	tcpServer.OnMessage = func(m string) {
 		var msg Msg
@@ -80,4 +82,16 @@ func InitGoServer() int {
 	}
 	port := tcpServer.RandPort()
 	return port
+}
+
+type logConnWriter struct {
+	tcpServer *tcp_utils.TcpServer
+	conn      *net.Conn
+}
+
+func (l logConnWriter) Write(p []byte) (n int, err error) {
+	if l.tcpServer != nil {
+		_ = l.tcpServer.Send(l.conn, string(p))
+	}
+	return len(p), nil
 }
