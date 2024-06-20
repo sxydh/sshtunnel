@@ -1,6 +1,7 @@
 package main
 
 import (
+	"C"
 	"encoding/json"
 	"fmt"
 	"github.com/sxydh/mgo-util/json_utils"
@@ -10,22 +11,19 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"time"
 )
 
-func main() {
-	i, _ := strconv.Atoi(os.Args[1])
-	InitGoServer(i)
-}
+func main() {}
 
 type Msg struct {
 	Flag string `json:"flag"`
 	Body string `json:"body"`
 }
 
+//export InitGoServer
 //goland:noinspection GoUnhandledErrorResult
-func InitGoServer(port int) {
+func InitGoServer() int {
 	/* 用于和 C# 交换数据的 TCP 服务 */
 	var tcpServer tcp_utils.TcpServer
 	var conn *net.Conn
@@ -82,9 +80,7 @@ func InitGoServer(port int) {
 			tunnels = tunnels[:0]
 		}
 	}
-	tcpServer.Port(port)
-	done := make(chan int)
-	<-done
+	return tcpServer.RandPort()
 }
 
 type logConnWriter struct {
