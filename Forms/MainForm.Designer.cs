@@ -124,6 +124,8 @@ namespace sshtunnel.Forms
                 // BackColor = System.Drawing.Color.Chocolate
             };
             logView.View = View.Details;
+            logView.VirtualMode = true;
+            logView.VirtualListSize = 100;
             logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
             panel.Controls.Add(logView, 0, 2);
 
@@ -145,7 +147,8 @@ namespace sshtunnel.Forms
                 this.Invoke((MethodInvoker)delegate
                 {
                     logView.BeginUpdate();
-                    logView.Items.Add(
+                    logView.Items.Insert(
+                        0,
                         new ListViewItem
                         {
                             Text = msg.Body
