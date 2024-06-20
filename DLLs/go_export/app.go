@@ -10,11 +10,13 @@ import (
 	"log"
 	"net"
 	"os"
+	"strconv"
 	"time"
 )
 
 func main() {
-	InitGoServer()
+	i, _ := strconv.Atoi(os.Args[0])
+	InitGoServer(i)
 }
 
 type Msg struct {
@@ -23,7 +25,7 @@ type Msg struct {
 }
 
 //goland:noinspection GoUnhandledErrorResult
-func InitGoServer() int {
+func InitGoServer(port int) {
 	/* 用于和 C# 交换数据的 TCP 服务 */
 	var tcpServer tcp_utils.TcpServer
 	var conn *net.Conn
@@ -80,8 +82,7 @@ func InitGoServer() int {
 			tunnels = tunnels[:0]
 		}
 	}
-	port := tcpServer.RandPort()
-	return port
+	tcpServer.Port(port)
 }
 
 type logConnWriter struct {
