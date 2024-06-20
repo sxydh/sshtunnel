@@ -77,23 +77,6 @@ func InitGoServer() int {
 	return tcpServer.RandPort()
 }
 
-type logConnWriter struct {
-	tcpServer *TcpServer
-	conn      *net.Conn
-}
-
-func (l logConnWriter) Write(p []byte) (n int, err error) {
-	if l.tcpServer != nil {
-		_ = l.tcpServer.Send(
-			l.conn,
-			ToJsonStr(&Msg{
-				Flag: "Log",
-				Body: string(p),
-			}))
-	}
-	return len(p), nil
-}
-
 /* json_utils begin */
 
 func ToJsonStr(p interface{}) string {
