@@ -52,7 +52,7 @@ namespace sshtunnel.Forms
                     new ColumnStyle(SizeType.Percent, 100)
                 },
                 RowStyles = {
-                    new RowStyle(SizeType.AutoSize),
+                    new RowStyle(SizeType.Absolute, 50),
                     new RowStyle(SizeType.AutoSize),
                     new RowStyle(SizeType.Percent, 100)
                 },
@@ -117,14 +117,14 @@ namespace sshtunnel.Forms
             panel.Controls.Add(tunnelTable, 0, 1);
 
             /* Log */
-            logView = new ListView()
+            logView = new System.Windows.Forms.ListView
             {
                 Name = "LogView",
                 Dock = DockStyle.Fill,
                 // BackColor = System.Drawing.Color.Chocolate
             };
             logView.View = View.Details;
-            logView.Columns.Add("", 800, HorizontalAlignment.Left);
+            logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
             panel.Controls.Add(logView, 0, 2);
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
