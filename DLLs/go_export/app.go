@@ -40,8 +40,9 @@ func InitGoServer() int {
 		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
 	}
 	lcw := &logConnWriter{}
-	writer := io.MultiWriter(file, lcw, os.Stdout)
-	log.SetOutput(writer)
+	log.SetOutput(&MultiWriter{
+		writers: []io.Writer{file, lcw, os.Stdout},
+	})
 
 	tcpServer = tcp_utils.TcpServer{}
 	tcpServer.OnConn = func(c *net.Conn) {
@@ -97,6 +98,17 @@ func (l logConnWriter) Write(p []byte) (n int, err error) {
 				Flag: "Log",
 				Body: string(p),
 			}))
+	}
+	return len(p), nil
+}
+
+type MultiWriter struct {
+	writers []io.Writer
+}
+
+func (t *MultiWriter) Write(p []byte) (n int, err error) {
+	for _, w := range t.writers {
+		n, err = w.Write(p)
 	}
 	return len(p), nil
 }
