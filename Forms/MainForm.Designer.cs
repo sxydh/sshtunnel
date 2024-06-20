@@ -124,8 +124,6 @@ namespace sshtunnel.Forms
                 // BackColor = System.Drawing.Color.Chocolate
             };
             logView.View = View.Details;
-            logView.VirtualMode = true;
-            logView.VirtualListSize = 100;
             logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
             panel.Controls.Add(logView, 0, 2);
 
@@ -154,6 +152,10 @@ namespace sshtunnel.Forms
                             Text = msg.Body
                         }
                     );
+                    if (logView.Items.Count > 100)
+                    {
+                        logView.Items.RemoveAt(logView.Items.Count - 1);
+                    }
                     logView.EndUpdate();
                 });
             };
