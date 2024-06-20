@@ -17,14 +17,14 @@ namespace sshtunnel.Forms
 
         public MainForm()
         {
-            /* 初始化 UI 组件 */
-            InitializeComponent();
-
             /* 初始化 GO 服务 */
             int port = InitGoServer();
 
             /* 初始化 TCP 客户端 */
             tcpHelper = TcpHelper.New(port);
+
+            /* 初始化 UI 组件 */
+            InitializeComponent();
 
             /* 防止闪退 */
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleUnknownException);
