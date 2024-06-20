@@ -20,10 +20,29 @@ import (
 
 func main() {}
 
-var logger logrus.Logger
+var logger *logrus.Logger
+
+type NetHook struct{}
+
+func (t *NetHook) Levels() []logrus.Level {
+	return logrus.AllLevels
+}
+
+func (t *NetHook) Fire(entry *logrus.Entry) error {
+	return nil
+}
 
 func init() {
-
+	/* 日志配置 */
+	file, err := os.OpenFile(
+		"logs/"+time.Now().Format("2006-01-02")+".go_export.log",
+		os.O_CREATE|os.O_WRONLY|os.O_APPEND,
+		os.ModePerm)
+	if err != nil {
+		logger.Fatalf("Open file for log error: err=%v", err)
+	}
+	logger.SetOutput(io.MultiWriter(os.Stdout, file))
+	logger.AddHook(&NetHook{})
 }
 
 type Msg struct {
