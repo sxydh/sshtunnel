@@ -10,10 +10,6 @@ namespace sshtunnel.Forms
     {
         private System.ComponentModel.IContainer components = null;
 
-        /* Panel */
-        private System.Windows.Forms.Panel buttonPanel;
-        private System.Windows.Forms.Panel tablePanel;
-
         /* Button */
         private Button directionButton;
         private string tunnelText = "Local To Remote";
@@ -25,7 +21,7 @@ namespace sshtunnel.Forms
         private DataGridView tunnelTable;
         private BindingList<Tunnel> tunnelList;
 
-        /* Log */
+        /* LogView */
         private ListView logView;
 
         protected override void Dispose(bool disposing)
@@ -46,51 +42,62 @@ namespace sshtunnel.Forms
             SuspendLayout();
 
             /* Panel */
-            buttonPanel = new System.Windows.Forms.FlowLayoutPanel
+            var panel = new System.Windows.Forms.TableLayoutPanel
             {
-                Name = "ButtonPanel",
-                Dock = DockStyle.Top,
-                Height = 50,
+                Name = "Panel",
+                Dock = DockStyle.Fill,
+                ColumnCount = 1,
+                RowCount = 3,
+                ColumnStyles = {
+                    new ColumnStyle(SizeType.Percent, 100)
+                },
+                RowStyles = {
+                    new RowStyle(SizeType.AutoSize),
+                    new RowStyle(SizeType.AutoSize),
+                    new RowStyle(SizeType.Percent, 100)
+                },
+                // BackColor = System.Drawing.Color.Blue
             };
 
-            tablePanel = new System.Windows.Forms.Panel
+            var buttonFlowPanel = new System.Windows.Forms.FlowLayoutPanel
             {
-                Name = "TablePanel",
+                Name = "ButtonFlowPanel",
                 Dock = DockStyle.Fill,
-                AutoScroll = true,
+                // BackColor = System.Drawing.Color.Orange,
             };
+            panel.Controls.Add(buttonFlowPanel, 0, 0);
 
             /* Button */
             directionButton = new Button
             {
-                Name = "SwitchButton",
+                Name = "DirectionButton",
                 Text = tunnelText,
                 Width = 200,
-                Height = 30,
+                Height = buttonFlowPanel.Height
             };
             directionButton.Click += new EventHandler(HandleSwitchButtonClick);
-            buttonPanel.Controls.Add(directionButton);
+            buttonFlowPanel.Controls.Add(directionButton);
 
             execButton = new Button
             {
                 Name = "ExecButton",
                 Text = "Run",
                 Width = 100,
-                Height = 30,
+                Height = buttonFlowPanel.Height
             };
             execButton.Click += new System.EventHandler(HandleExecButtonClick);
-            buttonPanel.Controls.Add(execButton);
+            buttonFlowPanel.Controls.Add(execButton);
 
             stopButton = new Button
             {
                 Name = "StopButton",
                 Text = "Stop",
                 Width = 100,
-                Height = 30,
+                Height = buttonFlowPanel.Height,
                 Visible = false,
             };
             stopButton.Click += new System.EventHandler(HandleStopButtonClick);
-            buttonPanel.Controls.Add(stopButton);
+            buttonFlowPanel.Controls.Add(stopButton);
 
             /* Table */
             tunnelTable = new DataGridView
@@ -102,22 +109,30 @@ namespace sshtunnel.Forms
                 RowTemplate = new DataGridViewRow
                 {
                     Height = 40,
-                }
+                },
+                // BackgroundColor = System.Drawing.Color.Beige
             };
             tunnelList = new BindingList<Tunnel>();
             tunnelTable.DataSource = tunnelList;
-            tablePanel.Controls.Add(tunnelTable);
+            panel.Controls.Add(tunnelTable, 0, 1);
 
             /* Log */
-            logView = new ListView();
+            logView = new ListView()
+            {
+                Name = "LogView",
+                Dock = DockStyle.Fill,
+                // BackColor = System.Drawing.Color.Chocolate
+            };
+            logView.View = View.Details;
+            logView.Columns.Add("", 800, HorizontalAlignment.Left);
+            panel.Controls.Add(logView, 0, 2);
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1200, 600);
             Name = "MainForm";
             Text = "SSH Tunnel";
-            Controls.Add(tablePanel);
-            Controls.Add(buttonPanel);
+            Controls.Add(panel);
 
             ResumeLayout(false);
         }
@@ -126,7 +141,17 @@ namespace sshtunnel.Forms
         {
             Action<string> action = value =>
             {
-                logView.Items.Add(value);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    logView.BeginUpdate();
+                    logView.Items.Add(
+                        new ListViewItem
+                        {
+                            Text = value
+                        }
+                    );
+                    logView.EndUpdate();
+                });
             };
             tcpHelper.OnMsg(new Utils.TcpHelper.MsgHandler(action));
         }
