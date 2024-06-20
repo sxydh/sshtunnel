@@ -2,6 +2,7 @@
 using sshtunnel.Models;
 using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
@@ -125,6 +126,9 @@ namespace sshtunnel.Forms
             };
             logView.View = View.Details;
             logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
+            Type type = logView.GetType();
+            PropertyInfo pi = type.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            pi.SetValue(logView, true, null);
             panel.Controls.Add(logView, 0, 2);
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
