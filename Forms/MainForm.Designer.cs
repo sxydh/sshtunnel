@@ -15,18 +15,15 @@ namespace sshtunnel.Forms
         private System.ComponentModel.IContainer components = null;
 
         /* Button */
-        private Button execButton;
-        private Button stopButton;
+        private MyButton execButton;
+        private MyButton stopButton;
 
         /* Table */
-        private DataGridView tunnelTable;
+        private MyDataGridView tunnelTable;
         private BindingList<Tunnel> tunnelList;
 
         /* LogView */
-        private ListView logView;
-
-        /* Other */
-        private FileHelper fileHelper = FileHelper.New("./sshtunnel.config");
+        private MyListView logView;
 
         protected override void Dispose(bool disposing)
         {
@@ -46,7 +43,7 @@ namespace sshtunnel.Forms
             SuspendLayout();
 
             /* Panel */
-            var panel = new System.Windows.Forms.TableLayoutPanel
+            var panel = new MyTableLayoutPanel
             {
                 Name = "Panel",
                 Dock = DockStyle.Fill,
@@ -64,17 +61,17 @@ namespace sshtunnel.Forms
             };
 
             /* Button */
-            execButton = new Button
+            execButton = new MyButton
             {
                 Name = "ExecButton",
                 Text = "Run",
                 Width = 100,
-                Dock = DockStyle.Left,  
+                Dock = DockStyle.Left,
             };
             execButton.Click += new System.EventHandler(HandleExecButtonClick);
             panel.Controls.Add(execButton, 0, 0);
 
-            stopButton = new Button
+            stopButton = new MyButton
             {
                 Name = "StopButton",
                 Text = "Stop",
@@ -86,7 +83,7 @@ namespace sshtunnel.Forms
             panel.Controls.Add(stopButton, 0, 0);
 
             /* Table */
-            tunnelTable = new DataGridView
+            tunnelTable = new MyDataGridView
             {
                 Name = "TunnelTable",
                 Dock = DockStyle.Fill,
@@ -104,7 +101,7 @@ namespace sshtunnel.Forms
             panel.Controls.Add(tunnelTable, 0, 1);
 
             /* Log */
-            logView = new System.Windows.Forms.ListView
+            logView = new MyListView
             {
                 Name = "LogView",
                 Dock = DockStyle.Fill,
@@ -112,9 +109,7 @@ namespace sshtunnel.Forms
             };
             logView.View = View.Details;
             logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
-            Type type = logView.GetType();
-            PropertyInfo pi = type.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
-            pi.SetValue(logView, true, null);
+            InitLogSource();
             panel.Controls.Add(logView, 0, 2);
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
@@ -175,7 +170,8 @@ namespace sshtunnel.Forms
             List<Tunnel> tl = tunnelList.ToList();
             /* 正向 */
             List<Tunnel> tlp = tl.FindAll(ele => ele.Direction == 1);
-            if (tlp.Count > 0) {
+            if (tlp.Count > 0)
+            {
                 Msg msg = new Msg
                 {
                     Flag = "NewTunnel",
@@ -207,12 +203,6 @@ namespace sshtunnel.Forms
             tcpHelper.Send(JsonConvert.SerializeObject(msg));
             execButton.Visible = true;
             stopButton.Visible = false;
-        }
-
-        private void OnFormClosing(object sender, FormClosingEventArgs e)
-        {
-            List<Tunnel> tl = tunnelList.ToList();
-            fileHelper.W(JsonConvert.SerializeObject(tl));
         }
 
     }

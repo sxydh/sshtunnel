@@ -1,14 +1,19 @@
-﻿using sshtunnel.Utils;
+﻿using Newtonsoft.Json;
+using sshtunnel.Models;
+using sshtunnel.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
 {
-    public partial class MainForm : Form
+    public partial class MainForm : MyForm
     {
 
         private TcpHelper tcpHelper;
+        private FileHelper fileHelper = FileHelper.New("./sshtunnel.config");
 
         public MainForm()
         {
@@ -16,13 +21,10 @@ namespace sshtunnel.Forms
             InitializeComponent();
 
             /* 初始化 GO 服务 */
-            int goServerPort = InitGoServer();
+            int port = InitGoServer();
 
             /* 初始化 TCP 客户端 */
-            tcpHelper = TcpHelper.New(goServerPort);
-
-            /* 初始化日志数据源 */
-            InitLogSource();
+            tcpHelper = TcpHelper.New(port);
 
             /* 防止闪退 */
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(HandleUnknownException);
@@ -37,16 +39,10 @@ namespace sshtunnel.Forms
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        /* 双缓冲解决卡顿闪烁 */
-        protected override CreateParams CreateParams
+        private void OnFormClosing(object sender, FormClosingEventArgs e)
         {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;
-                return cp;
-            }
-
+            List<Tunnel> tl = tunnelList.ToList();
+            fileHelper.W(JsonConvert.SerializeObject(tl));
         }
 
         [DllImport("go_export.dll")]
