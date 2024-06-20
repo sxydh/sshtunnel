@@ -7,7 +7,7 @@ import (
 	"github.com/sxydh/mgo-util/json_utils"
 	"github.com/sxydh/mgo-util/ssh_utils"
 	"github.com/sxydh/mgo-util/tcp_utils"
-	"io"
+	"go_export/utils"
 	"log"
 	"net"
 	"os"
@@ -35,7 +35,7 @@ func InitGoServer() int {
 	if err != nil {
 		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
 	}
-	writer := io.MultiWriter(os.Stdout, file)
+	writer := utils.MultiWriter(os.Stdout, file)
 	log.SetOutput(writer)
 
 	/* 用于和 C# 交换数据的 TCP 服务 */
