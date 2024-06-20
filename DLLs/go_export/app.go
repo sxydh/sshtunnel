@@ -1,7 +1,6 @@
 package main
 
 import (
-	"C"
 	"encoding/json"
 	"fmt"
 	"github.com/sxydh/mgo-util/json_utils"
@@ -14,14 +13,15 @@ import (
 	"time"
 )
 
-func main() {}
+func main() {
+	InitGoServer()
+}
 
 type Msg struct {
 	Flag string `json:"flag"`
 	Body string `json:"body"`
 }
 
-//export InitGoServer
 //goland:noinspection GoUnhandledErrorResult
 func InitGoServer() int {
 	/* 用于和 C# 交换数据的 TCP 服务 */
