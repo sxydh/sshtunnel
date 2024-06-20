@@ -93,7 +93,7 @@ func (l logConnWriter) Write(p []byte) (n int, err error) {
 	if l.tcpServer != nil {
 		_ = l.tcpServer.Send(
 			l.conn,
-			json_utils.ToJsonStr(Msg{
+			json_utils.ToJsonStr(&Msg{
 				Flag: "Log",
 				Body: string(p),
 			}))
