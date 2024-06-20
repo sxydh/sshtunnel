@@ -39,7 +39,7 @@ func InitGoServer() int {
 	if err != nil {
 		fmt.Printf("OpenFile error: logPath=%v, err=%v\r\n", logPath, err)
 	}
-	lcw := logConnWriter{}
+	lcw := &logConnWriter{}
 	writer := io.MultiWriter(os.Stdout, file, lcw)
 	log.SetOutput(writer)
 
