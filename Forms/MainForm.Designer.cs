@@ -63,35 +63,27 @@ namespace sshtunnel.Forms
                 // BackColor = System.Drawing.Color.Blue
             };
 
-            var buttonFlowPanel = new System.Windows.Forms.FlowLayoutPanel
-            {
-                Name = "ButtonFlowPanel",
-                Dock = DockStyle.Fill,
-                // BackColor = System.Drawing.Color.Orange,
-            };
-            panel.Controls.Add(buttonFlowPanel, 0, 0);
-
             /* Button */
             execButton = new Button
             {
                 Name = "ExecButton",
                 Text = "Run",
                 Width = 100,
-                Height = buttonFlowPanel.Height
+                Dock = DockStyle.Left,  
             };
             execButton.Click += new System.EventHandler(HandleExecButtonClick);
-            buttonFlowPanel.Controls.Add(execButton);
+            panel.Controls.Add(execButton, 0, 0);
 
             stopButton = new Button
             {
                 Name = "StopButton",
                 Text = "Stop",
                 Width = 100,
-                Height = buttonFlowPanel.Height,
+                Dock = DockStyle.Left,
                 Visible = false,
             };
             stopButton.Click += new System.EventHandler(HandleStopButtonClick);
-            buttonFlowPanel.Controls.Add(stopButton);
+            panel.Controls.Add(stopButton, 0, 0);
 
             /* Table */
             tunnelTable = new DataGridView
