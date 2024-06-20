@@ -37,6 +37,18 @@ namespace sshtunnel.Forms
             MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        /* 双缓冲解决卡顿闪烁 */
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;
+                return cp;
+            }
+
+        }
+
         [DllImport("go_export.dll")]
         public static extern int InitGoServer();
     }
