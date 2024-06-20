@@ -139,15 +139,16 @@ namespace sshtunnel.Forms
 
         private void InitLogSource()
         {
-            Action<string> action = value =>
+            Action<Msg> action = msg =>
             {
+                if (msg.Flag != "Log") { return; }
                 this.Invoke((MethodInvoker)delegate
                 {
                     logView.BeginUpdate();
                     logView.Items.Add(
                         new ListViewItem
                         {
-                            Text = value
+                            Text = msg.Body
                         }
                     );
                     logView.EndUpdate();

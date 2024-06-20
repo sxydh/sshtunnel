@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using sshtunnel.Models;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +14,7 @@ namespace sshtunnel.Utils
         private TcpClient client;
         private NetworkStream stream;
         private List<MsgHandler> msgHandlers = new List<MsgHandler>();
-        public delegate void MsgHandler(string msg);
+        public delegate void MsgHandler(Msg msg);
 
         private TcpHelper() { }
 
@@ -32,7 +34,7 @@ namespace sshtunnel.Utils
                     tcpHelper.stream.Read(bytes, 0, bytes.Length);
                     bytes = new byte[ByteHelper.Byte4ToInt(bytes)];
                     tcpHelper.stream.Read(bytes, 0, bytes.Length);
-                    string msg = Encoding.UTF8.GetString(bytes);
+                    Msg msg = JsonConvert.DeserializeObject<Msg>(Encoding.UTF8.GetString(bytes));
                     foreach (var msgHandler in tcpHelper.msgHandlers)
                     {
                         msgHandler.Invoke(msg);
