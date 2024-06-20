@@ -15,9 +15,6 @@ namespace sshtunnel.Forms
         private System.ComponentModel.IContainer components = null;
 
         /* Button */
-        private Button directionButton;
-        private string tunnelText = "Local To Remote";
-        private string reverseTunnelText = "Remote To Local";
         private Button execButton;
         private Button stopButton;
 
@@ -75,16 +72,6 @@ namespace sshtunnel.Forms
             panel.Controls.Add(buttonFlowPanel, 0, 0);
 
             /* Button */
-            directionButton = new Button
-            {
-                Name = "DirectionButton",
-                Text = tunnelText,
-                Width = 200,
-                Height = buttonFlowPanel.Height
-            };
-            directionButton.Click += new EventHandler(HandleSwitchButtonClick);
-            buttonFlowPanel.Controls.Add(directionButton);
-
             execButton = new Button
             {
                 Name = "ExecButton",
@@ -187,30 +174,34 @@ namespace sshtunnel.Forms
             tcpHelper.OnMsg(new Utils.TcpHelper.MsgHandler(action));
         }
 
-        private void HandleSwitchButtonClick(object sender, EventArgs e)
-        {
-            if (directionButton.Text == tunnelText)
-            {
-                directionButton.Text = reverseTunnelText;
-            }
-            else
-            {
-                directionButton.Text = tunnelText;
-            }
-        }
-
         private void HandleExecButtonClick(object sender, EventArgs e)
         {
             if (tunnelList.Count == 0)
             {
                 return;
             }
-            Msg msg = new Msg
+            List<Tunnel> tl = tunnelList.ToList();
+            /* 正向 */
+            List<Tunnel> tlp = tl.FindAll(ele => ele.Direction == 1);
+            if (tlp.Count > 0) {
+                Msg msg = new Msg
+                {
+                    Flag = "NewTunnel",
+                    Body = JsonConvert.SerializeObject(tlp)
+                };
+                tcpHelper.Send(JsonConvert.SerializeObject(msg));
+            }
+            /* 反向 */
+            List<Tunnel> tln = tl.FindAll(ele => ele.Direction == -1);
+            if (tln.Count > 0)
             {
-                Flag = directionButton.Text == tunnelText ? "NewTunnel" : "NewReverseTunnel",
-                Body = JsonConvert.SerializeObject(tunnelList)
-            };
-            tcpHelper.Send(JsonConvert.SerializeObject(msg));
+                Msg msg = new Msg
+                {
+                    Flag = "NewTunnel",
+                    Body = JsonConvert.SerializeObject(tln)
+                };
+                tcpHelper.Send(JsonConvert.SerializeObject(msg));
+            }
             execButton.Visible = false;
             stopButton.Visible = true;
         }

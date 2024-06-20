@@ -5,6 +5,9 @@ namespace sshtunnel.Models
     public class Tunnel
     {
 
+        [JsonProperty("direction")]
+        public int Direction { get; set; }
+
         [JsonProperty("sshIp")]
         public string SSHIp { get; set; }
 
