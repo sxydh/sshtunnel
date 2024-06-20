@@ -11,7 +11,7 @@ namespace sshtunnel.Utils
 
         private TcpClient client;
         private NetworkStream stream;
-        private List<MsgHandler> msgHandlers;
+        private List<MsgHandler> msgHandlers = new List<MsgHandler>();
         public delegate void MsgHandler(string msg);
 
         private TcpHelper() { }
