@@ -57,7 +57,6 @@ namespace sshtunnel.Forms
                     new RowStyle(SizeType.Absolute, 400),
                     new RowStyle(SizeType.Percent, 100)
                 },
-                // BackColor = System.Drawing.Color.Blue
             };
 
             /* Button */
@@ -87,13 +86,49 @@ namespace sshtunnel.Forms
             {
                 Name = "TunnelTable",
                 Dock = DockStyle.Fill,
-                AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
+                AutoGenerateColumns = false,
                 ColumnHeadersHeight = 50,
+                Columns = {
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "Direction",
+                        DataPropertyName = "Direction",
+                        Width = 120
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "SSH IP",
+                        DataPropertyName = "SSHIp",
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "SSH Port",
+                        DataPropertyName = "SSHPort",
+                        Width = 120
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "SSH User",
+                        DataPropertyName = "SSHUser",
+                        Width = 150
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "Listen Port",
+                        DataPropertyName = "ListenPort",
+                        Width = 150
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "Target IP",
+                        DataPropertyName = "TargetIp",
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "Target Port",
+                        DataPropertyName = "TargetPort",
+                        Width = 150
+                    }
+                },
                 RowTemplate = new DataGridViewRow
                 {
                     Height = 40,
                 },
-                // BackgroundColor = System.Drawing.Color.Beige
             };
             tunnelList = new BindingList<Tunnel>();
             InitTunnelList(tunnelList);
@@ -105,11 +140,15 @@ namespace sshtunnel.Forms
             {
                 Name = "LogView",
                 Dock = DockStyle.Fill,
-                // BackColor = System.Drawing.Color.Chocolate
+                View = View.Details,
+                HeaderStyle = ColumnHeaderStyle.None,
+                Columns = { 
+                    new ColumnHeader {
+                        Text = "Log",
+                        Width = 3000,
+                    }
+                }
             };
-            logView.View = View.Details;
-            logView.HeaderStyle = ColumnHeaderStyle.None;
-            logView.Columns.Add("Log", 3000, HorizontalAlignment.Left);
             InitLogSource();
             panel.Controls.Add(logView, 0, 2);
 
