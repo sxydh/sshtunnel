@@ -9,9 +9,7 @@ namespace sshtunnel.Forms
 
         public MyListView()
         {
-            Type type = GetType();
-            PropertyInfo pi = type.GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
-            pi.SetValue(this, true, null);
+            DoubleBuffered = true;
         }
 
         protected override CreateParams CreateParams
