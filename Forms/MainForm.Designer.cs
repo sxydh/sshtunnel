@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace sshtunnel.Forms
@@ -132,6 +134,7 @@ namespace sshtunnel.Forms
             };
             tunnelList = new BindingList<Tunnel>();
             InitTunnelList(tunnelList);
+            InitTunnelListHeartBeat(tunnelList);
             tunnelTable.DataSource = tunnelList;
             panel.Controls.Add(tunnelTable, 0, 1);
 
@@ -142,7 +145,7 @@ namespace sshtunnel.Forms
                 Dock = DockStyle.Fill,
                 View = View.Details,
                 HeaderStyle = ColumnHeaderStyle.None,
-                Columns = { 
+                Columns = {
                     new ColumnHeader {
                         Text = "Log",
                         Width = 3000,
@@ -174,6 +177,22 @@ namespace sshtunnel.Forms
             {
                 tlb.Add(t);
             }
+        }
+
+        private void InitTunnelListHeartBeat(BindingList<Tunnel> tlb)
+        {
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Msg msg = new Msg
+                    {
+                        Flag = "ListTunnel"
+                    };
+                    tcpHelper.Send(JsonConvert.SerializeObject(msg));
+                    Thread.Sleep(1000);
+                }
+            });
         }
 
         private void InitLogSource()
