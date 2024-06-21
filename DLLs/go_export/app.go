@@ -81,8 +81,9 @@ func InitGoServer() int {
 			tunnels = tunnels[:0]
 			/* 关闭 SSH 隧道 */
 		case "ListTunnel":
-			tcpServer.Send(conn, json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: json_utils.ToJsonStr(&tunnels)}))
-			tunnels = tunnels[:0]
+			body := json_utils.ToJsonStr(&tunnels)
+			msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: body})
+			tcpServer.Send(conn, msg)
 		}
 	}
 	port := tcpServer.RandPort()
