@@ -99,7 +99,7 @@ namespace sshtunnel.Forms
                     new DataGridViewTextBoxColumn {
                         HeaderText = "SSH IP",
                         DataPropertyName = "SSHIp",
-                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                        Width = 200
                     },
                     new DataGridViewTextBoxColumn {
                         HeaderText = "SSH Port",
@@ -119,12 +119,17 @@ namespace sshtunnel.Forms
                     new DataGridViewTextBoxColumn {
                         HeaderText = "Target IP",
                         DataPropertyName = "TargetIp",
-                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                        Width = 200
                     },
                     new DataGridViewTextBoxColumn {
                         HeaderText = "Target Port",
                         DataPropertyName = "TargetPort",
                         Width = 150
+                    },
+                    new DataGridViewTextBoxColumn {
+                        HeaderText = "Last Alive",
+                        DataPropertyName = "LastAlive",
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
                     }
                 },
                 RowTemplate = new DataGridViewRow
@@ -157,7 +162,7 @@ namespace sshtunnel.Forms
 
             AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1200, 800);
+            ClientSize = new System.Drawing.Size(1500, 800);
             Name = "MainForm";
             Text = "SSH Tunnel";
             Controls.Add(panel);
@@ -190,9 +195,31 @@ namespace sshtunnel.Forms
                         Flag = "ListTunnel"
                     };
                     tcpHelper.Send(JsonConvert.SerializeObject(msg));
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
                 }
             });
+            Action<Msg> action = msg =>
+            {
+                if (msg.Flag != "ListTunnel") { return; }
+                List<Tunnel> tl = JsonConvert.DeserializeObject<List<Tunnel>>(msg.Body);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    tunnelTable.SuspendLayout();
+                    foreach (Tunnel tb in tlb)
+                    {
+                        foreach (Tunnel t in tl)
+                        {
+                            if (tb.Id == t.Id)
+                            {
+                                tb.LastAlive = t.LastAlive;
+                            }
+                        }
+                    }
+                    tunnelTable.Invalidate();
+                    tunnelTable.ResumeLayout();
+                });
+            };
+            tcpHelper.OnMsg(new TcpHelper.MsgHandler(action));
         }
 
         private void InitLogSource()
@@ -225,6 +252,13 @@ namespace sshtunnel.Forms
             if (tunnelList.Count == 0)
             {
                 return;
+            }
+            foreach (Tunnel tb in tunnelList)
+            {
+                if (string.IsNullOrEmpty(tb.Id))
+                {
+                    tb.Id = Guid.NewGuid().ToString();
+                }
             }
             List<Tunnel> tl = tunnelList.ToList();
             /* 正向 */

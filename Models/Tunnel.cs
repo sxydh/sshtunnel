@@ -5,6 +5,9 @@ namespace sshtunnel.Models
     public class Tunnel
     {
 
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
         [JsonProperty("direction")]
         public int Direction { get; set; }
 
@@ -31,6 +34,9 @@ namespace sshtunnel.Models
 
         [JsonProperty("delete")]
         public int Delete { get; set; }
+
+        [JsonProperty("lastAlive")]
+        public string LastAlive { get; set; }
 
     }
 }
