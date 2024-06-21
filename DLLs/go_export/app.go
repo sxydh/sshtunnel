@@ -79,6 +79,10 @@ func InitGoServer() int {
 			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
 			ssh_utils.StopTunnel(&tunnels)
 			tunnels = tunnels[:0]
+			/* 关闭 SSH 隧道 */
+		case "ListTunnel":
+			tcpServer.Send(conn, json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: json_utils.ToJsonStr(&tunnels)}))
+			tunnels = tunnels[:0]
 		}
 	}
 	port := tcpServer.RandPort()
