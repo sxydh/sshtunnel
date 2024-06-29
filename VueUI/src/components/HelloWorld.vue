@@ -40,64 +40,63 @@
                 item-value="value"
                 density="compact"
                 variant="solo"
-                hide-details
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.sshIp"
+                :rules="[rules.required]"
                 density="comfortable"
                 variant="solo"
-                hide-details
                 clearable
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.sshPort"
+                :rules="[rules.required]"
                 type="number"
                 hide-spin-buttons
                 density="comfortable"
                 variant="solo"
-                hide-details
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.sshUser"
+                :rules="[rules.required]"
                 density="comfortable"
                 variant="solo"
-                hide-details
                 clearable
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.listenPort"
+                :rules="[rules.required]"
                 type="number"
                 hide-spin-buttons
                 density="comfortable"
                 variant="solo"
-                hide-details
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.targetIp"
+                :rules="[rules.required]"
                 density="comfortable"
                 variant="solo"
-                hide-details
                 clearable
             />
           </td>
           <td>
             <v-text-field
                 v-model="item.targetPort"
+                :rules="[rules.required]"
                 type="number"
                 hide-spin-buttons
                 density="comfortable"
                 variant="solo"
-                hide-details
             />
           </td>
           <td>
@@ -105,7 +104,6 @@
                 v-model="item.lastAlive"
                 density="comfortable"
                 variant="solo"
-                hide-details
                 disabled
             />
           </td>
@@ -214,6 +212,9 @@ const directions = ref([
   },
 ])
 const filterValue = ref()
+const rules = ref({
+  required: (value: any) => !!value || 'Field is required',
+})
 // WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
