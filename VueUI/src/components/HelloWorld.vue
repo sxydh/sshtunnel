@@ -190,7 +190,7 @@ const headers = [
   },
 ]
 const tunnels = ref<Tunnel[]>([])
-const newTunnel = {
+const tunnelTemplate = {
   id: null,
   direction: 1,
   sshIp: null,
@@ -238,10 +238,12 @@ onMounted(() => {
 
 /* 函数 */
 const initLastTunnel = (tunnels: Tunnel[]) => {
-  if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], newTunnel, ['id'])) {
+  if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], tunnelTemplate, ['id'])) {
     return
   }
-  tunnels.push(JSON.parse(JSON.stringify(newTunnel)))
+  const newTunnel = JSON.parse(JSON.stringify(tunnelTemplate))
+  newTunnel.id = new Date().getTime().toString()
+  tunnels.push(newTunnel)
 }
 const handleTrInputEvent = (p: any) => {
   if (p == tunnels.value.length - 1) {
