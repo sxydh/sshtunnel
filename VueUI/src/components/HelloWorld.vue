@@ -46,7 +46,7 @@
             <td>
               <v-text-field
                   v-model="item.sshIp"
-                  :rules="[rules.required(index)]"
+                  :rules="[rules.ip(index)]"
                   density="comfortable"
                   variant="solo"
                   clearable
@@ -84,7 +84,7 @@
             <td>
               <v-text-field
                   v-model="item.targetIp"
-                  :rules="[rules.required(index)]"
+                  :rules="[rules.ip(index)]"
                   density="comfortable"
                   variant="solo"
                   clearable
@@ -216,8 +216,11 @@ const directions = ref([
 const filterValue = ref()
 const rules = ref({
   required(index: number) {
-    return (value: any) => index === (tunnels.value.length - 1) || !!value || 'Field is required'
+    return (value: any) => index === (tunnels.value.length - 1) || !!value || 'Please input'
   },
+  ip(index: number) {
+    return (value: any) => index === (tunnels.value.length - 1) || /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value) || 'Please input IP'
+  }
 })
 const tunnelForm = ref(null)
 // WebSocket
