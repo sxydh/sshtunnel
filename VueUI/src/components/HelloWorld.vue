@@ -1,5 +1,30 @@
 <template>
   <v-card>
+    <v-card-actions>
+      <v-row>
+        <v-col class="d-flex align-center justify-end">
+          <v-text-field
+              v-model="filterValue"
+              prepend-icon="mdi-magnify"
+              variant="solo"
+              density="comfortable"
+              hide-details
+              clearable
+              max-width="300"
+          />
+        </v-col>
+        <v-col class="d-flex align-center justify-start">
+          <v-btn
+              variant="tonal"
+              density="comfortable"
+              icon="mdi-send"
+              color="#2DC1DD"
+              @click.prevent="handlePushEvent"
+          />
+        </v-col>
+      </v-row>
+    </v-card-actions>
+
     <v-data-table
         :headers="headers"
         :items="tunnels"
@@ -103,6 +128,7 @@
 >
 import {onMounted, ref} from 'vue'
 import {Tunnel} from '@/models/Tunnel'
+import {Msg} from '@/models/Msg'
 import {ifEqual} from '@/utils/obj_util'
 
 /* 变量 */
@@ -187,6 +213,7 @@ const directions = ref([
     value: -1,
   },
 ])
+const filterValue = ref()
 // WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
@@ -223,6 +250,13 @@ const handleTrInputEvent = (p: any) => {
 }
 const handleTrDeleteEvent = (p: any) => {
   tunnels.value.splice(p, 1)
+}
+const handlePushEvent = () => {
+  const msg: Msg = {
+    flag: '',
+    body: '',
+  }
+  webSocket.send(JSON.stringify(msg))
 }
 </script>
 
