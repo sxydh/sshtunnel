@@ -238,7 +238,7 @@ onMounted(() => {
 
 /* 函数 */
 const initLastTunnel = (tunnels: Tunnel[]) => {
-  if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], newTunnel)) {
+  if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], newTunnel, ['id'])) {
     return
   }
   tunnels.push(JSON.parse(JSON.stringify(newTunnel)))
