@@ -46,7 +46,7 @@
             <td>
               <v-text-field
                   v-model="item.sshIp"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   density="comfortable"
                   variant="solo"
                   clearable
@@ -55,7 +55,7 @@
             <td>
               <v-text-field
                   v-model="item.sshPort"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
                   density="comfortable"
@@ -65,7 +65,7 @@
             <td>
               <v-text-field
                   v-model="item.sshUser"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   density="comfortable"
                   variant="solo"
                   clearable
@@ -74,7 +74,7 @@
             <td>
               <v-text-field
                   v-model="item.listenPort"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
                   density="comfortable"
@@ -84,7 +84,7 @@
             <td>
               <v-text-field
                   v-model="item.targetIp"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   density="comfortable"
                   variant="solo"
                   clearable
@@ -93,7 +93,7 @@
             <td>
               <v-text-field
                   v-model="item.targetPort"
-                  :rules="[rules.required]"
+                  :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
                   density="comfortable"
@@ -215,7 +215,9 @@ const directions = ref([
 ])
 const filterValue = ref()
 const rules = ref({
-  required: (value: any) => !!value || 'Field is required',
+  required(p: any) {
+    return (value: any) => !!value || 'Field is required'
+  },
 })
 const tunnelForm = ref(null)
 // WebSocket
