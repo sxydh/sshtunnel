@@ -2,8 +2,9 @@
   <v-card>
     <v-card-actions>
       <v-row>
-        <v-col class="d-flex align-center justify-end">
+        <v-col class="d-flex align-center justify-center">
           <v-text-field
+              class="mx-3"
               v-model="filterValue"
               prepend-icon="mdi-magnify"
               variant="solo"
@@ -12,9 +13,8 @@
               clearable
               max-width="300"
           />
-        </v-col>
-        <v-col class="d-flex align-center justify-start">
           <v-btn
+              class="mx-3"
               variant="tonal"
               density="comfortable"
               icon="mdi-send"
@@ -220,7 +220,7 @@ const rules = ref({
   },
   ip(index: number) {
     return (value: any) => index === (tunnels.value.length - 1) || /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(value) || 'Please input IP'
-  }
+  },
 })
 const tunnelForm = ref(null)
 // WebSocket
