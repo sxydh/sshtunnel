@@ -215,8 +215,8 @@ const directions = ref([
 ])
 const filterValue = ref()
 const rules = ref({
-  required(p: any) {
-    return (value: any) => !!value || 'Field is required'
+  required(index: number) {
+    return (value: any) => index === (tunnels.value.length - 1) || !!value || 'Field is required'
   },
 })
 const tunnelForm = ref(null)
