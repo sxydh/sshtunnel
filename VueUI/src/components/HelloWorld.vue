@@ -252,11 +252,24 @@ const handleTrDeleteEvent = (p: any) => {
   tunnels.value.splice(p, 1)
 }
 const handlePushEvent = () => {
-  const msg: Msg = {
-    flag: '',
-    body: '',
+  /* 正向 */
+  let targetList = tunnels.value.filter(ele => ele.direction === 1)
+  if (targetList.length > 0) {
+    const msg: Msg = {
+      flag: 'NewTunnel',
+      body: JSON.stringify(targetList),
+    }
+    webSocket.send(JSON.stringify(msg))
   }
-  webSocket.send(JSON.stringify(msg))
+  /* 反向 */
+  targetList = tunnels.value.filter(ele => ele.direction === -1)
+  if (targetList.length > 0) {
+    const msg: Msg = {
+      flag: 'NewReverseTunnel',
+      body: JSON.stringify(targetList),
+    }
+    webSocket.send(JSON.stringify(msg))
+  }
 }
 </script>
 
