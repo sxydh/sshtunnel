@@ -265,6 +265,7 @@ const handlePushEvent = () => {
       flag: 'NewTunnel',
       body: JSON.stringify(targetList),
     }
+    console.debug(`webSocket.send`, msg)
     webSocket.send(JSON.stringify(msg))
   }
   /* 反向 */
@@ -274,6 +275,7 @@ const handlePushEvent = () => {
       flag: 'NewReverseTunnel',
       body: JSON.stringify(targetList),
     }
+    console.debug(`webSocket.send`, msg)
     webSocket.send(JSON.stringify(msg))
   }
 }
