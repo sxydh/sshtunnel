@@ -25,98 +25,100 @@
       </v-row>
     </v-card-actions>
 
-    <v-data-table
-        :headers="headers"
-        :items="tunnels"
-        hide-default-footer
-    >
-      <template v-slot:item="{ item, index }">
-        <tr @input="handleTrInputEvent(index)">
-          <td>
-            <v-select
-                v-model="item.direction"
-                :items="directions"
-                item-title="name"
-                item-value="value"
-                density="compact"
-                variant="solo"
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.sshIp"
-                :rules="[rules.required]"
-                density="comfortable"
-                variant="solo"
-                clearable
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.sshPort"
-                :rules="[rules.required]"
-                type="number"
-                hide-spin-buttons
-                density="comfortable"
-                variant="solo"
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.sshUser"
-                :rules="[rules.required]"
-                density="comfortable"
-                variant="solo"
-                clearable
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.listenPort"
-                :rules="[rules.required]"
-                type="number"
-                hide-spin-buttons
-                density="comfortable"
-                variant="solo"
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.targetIp"
-                :rules="[rules.required]"
-                density="comfortable"
-                variant="solo"
-                clearable
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.targetPort"
-                :rules="[rules.required]"
-                type="number"
-                hide-spin-buttons
-                density="comfortable"
-                variant="solo"
-            />
-          </td>
-          <td>
-            <v-text-field
-                v-model="item.lastAlive"
-                density="comfortable"
-                variant="solo"
-                disabled
-            />
-          </td>
-          <td v-if="index != (tunnels.length - 1)">
-            <v-icon
-                icon="mdi-delete"
-                color="#ff3a3a"
-                @click="handleTrDeleteEvent(index)"
-            />
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
+    <v-form ref="tunnelForm">
+      <v-data-table
+          :headers="headers"
+          :items="tunnels"
+          hide-default-footer
+      >
+        <template v-slot:item="{ item, index }">
+          <tr @input="handleTrInputEvent(index)">
+            <td>
+              <v-select
+                  v-model="item.direction"
+                  :items="directions"
+                  item-title="name"
+                  item-value="value"
+                  density="compact"
+                  variant="solo"
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.sshIp"
+                  :rules="[rules.required]"
+                  density="comfortable"
+                  variant="solo"
+                  clearable
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.sshPort"
+                  :rules="[rules.required]"
+                  type="number"
+                  hide-spin-buttons
+                  density="comfortable"
+                  variant="solo"
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.sshUser"
+                  :rules="[rules.required]"
+                  density="comfortable"
+                  variant="solo"
+                  clearable
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.listenPort"
+                  :rules="[rules.required]"
+                  type="number"
+                  hide-spin-buttons
+                  density="comfortable"
+                  variant="solo"
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.targetIp"
+                  :rules="[rules.required]"
+                  density="comfortable"
+                  variant="solo"
+                  clearable
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.targetPort"
+                  :rules="[rules.required]"
+                  type="number"
+                  hide-spin-buttons
+                  density="comfortable"
+                  variant="solo"
+              />
+            </td>
+            <td>
+              <v-text-field
+                  v-model="item.lastAlive"
+                  density="comfortable"
+                  variant="solo"
+                  disabled
+              />
+            </td>
+            <td v-if="index != (tunnels.length - 1)">
+              <v-icon
+                  icon="mdi-delete"
+                  color="#ff3a3a"
+                  @click="handleTrDeleteEvent(index)"
+              />
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-form>
   </v-card>
 </template>
 
@@ -215,6 +217,7 @@ const filterValue = ref()
 const rules = ref({
   required: (value: any) => !!value || 'Field is required',
 })
+const tunnelForm = ref(null)
 // WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
@@ -254,7 +257,11 @@ const handleTrInputEvent = (p: any) => {
 const handleTrDeleteEvent = (p: any) => {
   tunnels.value.splice(p, 1)
 }
-const handlePushEvent = () => {
+const handlePushEvent = async () => {
+  const results = await (tunnelForm.value as any).validate()
+  if (!results.valid) {
+    return
+  }
   let list = tunnels.value.slice(0, -1)
   if (list.length === 0) {
     return
