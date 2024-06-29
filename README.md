@@ -2,7 +2,7 @@
 
 ## QuickStart
 
-![Example](./screenshot/sshtunnel.jpg)
-![Example](./screenshot/tunnel.jpg)
-![Example](./screenshot/reverse_tunnel.jpg)
-![Example](./screenshot/architecture.jpg)
+![Example](./doc/winform.jpg)
+![Example](./doc/tunnel.jpg)
+![Example](./doc/reverse_tunnel.jpg)
+![Example](./doc/architecture.jpg)
