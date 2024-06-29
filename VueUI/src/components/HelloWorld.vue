@@ -255,6 +255,9 @@ const handleTrDeleteEvent = (p: any) => {
 }
 const handlePushEvent = () => {
   let list = tunnels.value.slice(0, -1)
+  if (list.length === 0) {
+    return
+  }
   /* 正向 */
   let targetList = list.filter(ele => ele.direction === 1)
   if (targetList.length > 0) {
