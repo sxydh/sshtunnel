@@ -1,4 +1,4 @@
-export function ifEqual(a: any, b: any, exclude: string[]): boolean {
+export function ifEqual(a: any, b: any, exclude?: string[] | undefined): boolean {
     if (a === b) {
         return true
     }
