@@ -167,7 +167,7 @@ const headers = [
     title: 'Target IP',
     align: 'center',
     key: 'targetIp',
-    width: 150,
+    width: 200,
   },
   {
     title: 'Target Port',
