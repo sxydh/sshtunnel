@@ -1,4 +1,4 @@
-export function ifEqual(a: any, b: any, exclude?: string[]): boolean {
+export function ifEqual(a: any, b: any, exclusive?: string[]): boolean {
     if (a === b) {
         return true
     }
@@ -8,6 +8,9 @@ export function ifEqual(a: any, b: any, exclude?: string[]): boolean {
         return false
     }
     for (let key of keysA) {
+        if (exclusive && exclusive.includes(key)) {
+            continue
+        }
         if (!keysB.includes(key) || a[key] != b[key]) {
             return false
         }
