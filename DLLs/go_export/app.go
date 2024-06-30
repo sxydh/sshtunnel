@@ -86,6 +86,17 @@ func InitGoServer() int {
 				msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: body})
 				wsServer.Send(conn, msg)
 			}
+		case "SaveTunnel":
+			log.Printf("SaveTunnel: body=%v", msg.Body)
+			file, err := os.OpenFile("sshtunnel.config", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+			if err != nil {
+				log.Printf("SaveTunnel open file error: err=%v", err)
+			}
+			_, err = file.Write([]byte(msg.Body))
+			if err != nil {
+				log.Printf("SaveTunnel write error: err=%v", err)
+			}
+			file.Close()
 		}
 	}
 	port := wsServer.RandPort()
