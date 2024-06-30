@@ -1,16 +1,12 @@
-﻿namespace sshtunnel
+﻿using Microsoft.Web.WebView2.WinForms;
+using System.Windows.Forms;
+
+namespace sshtunnel
 {
     partial class Form1
     {
-        /// <summary>
-        /// 必需的设计器变量。
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// 清理所有正在使用的资源。
-        /// </summary>
-        /// <param name="disposing">如果应释放托管资源，为 true；否则为 false。</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -20,21 +16,28 @@
             base.Dispose(disposing);
         }
 
-        #region Windows 窗体设计器生成的代码
-
-        /// <summary>
-        /// 设计器支持所需的方法 - 不要修改
-        /// 使用代码编辑器修改此方法的内容。
-        /// </summary>
         private void InitializeComponent()
         {
+            var webView2 = new WebView2();
+            (webView2 as System.ComponentModel.ISupportInitialize).BeginInit();
+            webView2.Dock = System.Windows.Forms.DockStyle.Fill;
+            webView2.Source = new System.Uri($"http://localhost:{fsPort}/", System.UriKind.Absolute);
+            webView2.EnsureCoreWebView2Async().ContinueWith(p =>
+            {
+                Invoke((MethodInvoker)delegate
+                {
+                    webView2.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                });
+            });
+            this.Controls.Add(webView2);
+            (webView2 as System.ComponentModel.ISupportInitialize).EndInit();
+
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1800, 900);
             this.Text = "Form1";
         }
 
-        #endregion
     }
 }
 

@@ -1,20 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
 namespace sshtunnel
 {
     public partial class Form1 : Form
     {
+
+        private int fsPort;
+        private int wsPort;
+
         public Form1()
         {
+            fsPort = InitFsServer();
+            wsPort = InitWsServer();
             InitializeComponent();
         }
+
+        [System.Runtime.InteropServices.DllImport("ws.dll", EntryPoint = "InitFsServer")]
+        private static extern int InitFsServer();
+
+        [System.Runtime.InteropServices.DllImport("ws.dll", EntryPoint = "InitWsServer")]
+        private static extern int InitWsServer();
+
     }
 }
