@@ -15,7 +15,7 @@ namespace sshtunnel
             InitializeComponent();
         }
 
-        [System.Runtime.InteropServices.DllImport("ws.dll", EntryPoint = "InitFsServer")]
+        [System.Runtime.InteropServices.DllImport("fs.dll", EntryPoint = "InitFsServer")]
         private static extern int InitFsServer();
 
         [System.Runtime.InteropServices.DllImport("ws.dll", EntryPoint = "InitWsServer")]
