@@ -118,7 +118,7 @@ func InitWsServer() int {
 			wsServer.Send(conn, msg)
 		}
 	}
-	port := wsServer.RandPort("/2b2043a0-57c7-4e4c-a680-30931601b663")
+	port := wsServer.RandPort("/")
 	return port
 }
 
@@ -162,7 +162,7 @@ func InitFsServer() int {
 		}
 		_ = listener.Close()
 		go func() {
-			http.Handle("/fb152822-9b5b-44e1-b9f6-dd0d5bb71e40", http.FileServer(http.Dir("./ROOT")))
+			http.Handle("/", http.FileServer(http.Dir("./ROOT")))
 			log.Printf("ListenAndServe going: addr=%v", addr)
 			err = http.ListenAndServe(addr, nil)
 			if err != nil {
