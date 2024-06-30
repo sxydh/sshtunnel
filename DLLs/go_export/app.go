@@ -21,9 +21,9 @@ type Msg struct {
 	Body string `json:"body"`
 }
 
-//export InitGoServer
+//export InitWsServer
 //goland:noinspection GoUnhandledErrorResult
-func InitGoServer() int {
+func InitWsServer() int {
 	/* 用于和 C# 交换数据的 WS 服务 */
 	var wsServer ws_utils.WsServer
 	var conn *websocket.Conn
