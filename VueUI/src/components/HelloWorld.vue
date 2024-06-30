@@ -290,7 +290,6 @@ const onOpen = () => {
   initJob()
 }
 const onMessage = (e: any) => {
-  console.debug(`WebSocket onmessage`, e)
   const msg: Msg = JSON.parse(e.data)
   switch (msg.flag) {
     case 'Log':
