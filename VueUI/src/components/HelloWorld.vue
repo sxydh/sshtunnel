@@ -113,6 +113,7 @@
                   v-model="item.lastAlive"
                   density="comfortable"
                   variant="solo"
+                  :class="lastAliveClass(item.lastAlive)"
                   disabled
               />
             </td>
@@ -240,7 +241,7 @@ const stopBtn = {
   color: '#ff3a3a',
 }
 const reloadBtn = {
-  icon: 'mdi-reload',
+  icon: 'mdi-autorenew',
   color: '#318aff',
 }
 const btnCase = ref(pushBtn)
@@ -248,6 +249,17 @@ const job = ref()
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
 const webSocket = ref()
+const lastAliveClass = (p: any): string => {
+  let clazz = 'v-text-success'
+  if (btnCase.value.icon === stopBtn.icon) {
+    const diff = new Date().getTime() - new Date(p).getTime()
+    const diffMi = diff / (1000 * 60)
+    if (diffMi > 1) {
+      clazz = 'v-text-warn'
+    }
+  }
+  return clazz
+}
 
 /* 回调 */
 onMounted(() => {
@@ -418,5 +430,12 @@ const saveTunnels = (tunnels: Tunnel[]) => {
 td {
   text-align: center;
   padding: 5px 10px !important;
+}
+
+.v-text-success :deep(input) {
+  color: #06fc91;
+}
+.v-text-warn :deep(input) {
+  color: #ff3a3a;
 }
 </style>
