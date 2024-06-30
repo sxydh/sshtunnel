@@ -25,9 +25,9 @@
               class="mx-3"
               variant="tonal"
               density="comfortable"
-              :icon="reloadBtn.icon"
-              :color="reloadBtn.color"
-              @click.prevent="handleReloadEvent"
+              :icon="saveBtn.icon"
+              :color="saveBtn.color"
+              @click.prevent="handleSaveEvent"
           />
         </v-col>
       </v-row>
@@ -249,9 +249,9 @@ const stopBtn = {
   icon: 'mdi-stop-circle',
   color: '#ff3a3a',
 }
-const reloadBtn = {
-  icon: 'mdi-autorenew',
-  color: '#318aff',
+const saveBtn = {
+  icon: 'mdi-content-save',
+  color: '#f18a1e',
 }
 const btnCase = ref(pushBtn)
 const job = ref()
@@ -277,10 +277,6 @@ onMounted(() => {
   initWs()
   initLastTunnel(tunnels.value)
 })
-window.onbeforeunload = () => {
-  saveTunnels(tunnels.value)
-  clearInterval(job.value)
-}
 
 /* 函数 */
 const initWs = () => {
@@ -439,8 +435,8 @@ const handleStopEvent = (): boolean => {
   send(msg)
   return true
 }
-const handleReloadEvent = () => {
-  location.reload()
+const handleSaveEvent = () => {
+  saveTunnels(tunnels.value)
 }
 const saveTunnels = (tunnels: Tunnel[]) => {
   const targetList = tunnels.slice(0, -1)
