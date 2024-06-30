@@ -114,7 +114,7 @@
                   :class="lastAliveClass(item.lastAlive)"
                   density="comfortable"
                   variant="solo"
-                  disabled
+                  readonly
               />
             </td>
             <td v-if="index != (tunnels.length - 1)">
