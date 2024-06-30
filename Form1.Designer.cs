@@ -6,6 +6,7 @@ namespace sshtunnel
     partial class Form1
     {
         private System.ComponentModel.IContainer components = null;
+        private WebView2 webView2;
 
         protected override void Dispose(bool disposing)
         {
@@ -18,7 +19,7 @@ namespace sshtunnel
 
         private void InitializeComponent()
         {
-            var webView2 = new WebView2();
+            webView2 = new WebView2();
             (webView2 as System.ComponentModel.ISupportInitialize).BeginInit();
             webView2.Dock = System.Windows.Forms.DockStyle.Fill;
             webView2.Source = new System.Uri($"http://localhost:{fsPort}/?serverPort={wsPort}", System.UriKind.Absolute);
@@ -27,6 +28,8 @@ namespace sshtunnel
                 Invoke((MethodInvoker)delegate
                 {
                     webView2.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
+                    webView2.CoreWebView2.Settings.IsWebMessageEnabled = true;
+                    webView2.CoreWebView2.WebMessageReceived += WebMessageReceived;
                 });
             });
             this.Controls.Add(webView2);
@@ -37,7 +40,6 @@ namespace sshtunnel
             this.ClientSize = new System.Drawing.Size(1800, 900);
             this.Text = "Form1";
         }
-
     }
 }
 
