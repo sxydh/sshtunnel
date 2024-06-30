@@ -310,6 +310,9 @@ const onMessage = (e: any) => {
   switch (msg.flag) {
     case 'Log':
       logs.value.unshift({text: msg.body})
+      if (logs.value.length > 100) {
+        logs.value.splice(-1, 1)
+      }
       break
     case 'ListSavedTunnel':
       const savedTunnels: Tunnel[] = JSON.parse(msg.body)
