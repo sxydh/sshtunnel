@@ -10,7 +10,11 @@ import (
 	"github.com/sxydh/mgo-util/ws_utils"
 	"io"
 	"log"
+	"math/rand"
+	"net"
+	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -144,4 +148,27 @@ func (t *MultiWriter) Write(p []byte) (n int, err error) {
 		n, err = w.Write(p)
 	}
 	return len(p), nil
+}
+
+//export InitFsServer
+func InitFsServer() int {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for {
+		port := 40000 + r.Intn(10000)
+		addr := ":" + strconv.Itoa(port)
+		listener, err := net.Listen("tcp", addr)
+		if err != nil {
+			continue
+		}
+		_ = listener.Close()
+		go func() {
+			http.Handle("/", http.FileServer(http.Dir("./ROOT")))
+			log.Printf("ListenAndServe going: addr=%v", addr)
+			err = http.ListenAndServe(addr, nil)
+			if err != nil {
+				log.Printf("ListenAndServe error: err=%v", err)
+			}
+		}()
+		return port
+	}
 }
