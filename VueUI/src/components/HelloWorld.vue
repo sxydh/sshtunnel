@@ -111,9 +111,9 @@
             <td>
               <v-text-field
                   v-model="item.lastAlive"
+                  :class="lastAliveClass(item.lastAlive)"
                   density="comfortable"
                   variant="solo"
-                  :class="lastAliveClass(item.lastAlive)"
                   disabled
               />
             </td>
@@ -139,6 +139,7 @@ import {onMounted, ref} from 'vue'
 import {Tunnel} from '@/models/Tunnel'
 import {Msg} from '@/models/Msg'
 import {ifEqual} from '@/utils/obj_util'
+import {stringify} from '@/utils/json_util'
 
 /* 变量 */
 const headers = [
@@ -253,8 +254,8 @@ const lastAliveClass = (p: any): string => {
   let clazz = 'v-text-success'
   if (btnCase.value.icon === stopBtn.icon) {
     const diff = new Date().getTime() - new Date(p).getTime()
-    const diffMi = diff / (1000 * 60)
-    if (diffMi > 1) {
+    const diffMi = diff / 1000
+    if (diffMi > 20) {
       clazz = 'v-text-warn'
     }
   }
@@ -326,7 +327,7 @@ const onClose = (e: any) => {
 }
 const send = (msg: Msg) => {
   console.debug(`webSocket.send`, msg)
-  webSocket.value.send(JSON.stringify(msg))
+  webSocket.value.send(stringify(msg))
 }
 const initTunnels = () => {
   const msg: Msg = {
@@ -339,7 +340,7 @@ const initLastTunnel = (tunnels: Tunnel[]) => {
   if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], tunnelTemplate, ['id'])) {
     return
   }
-  const newTunnel = JSON.parse(JSON.stringify(tunnelTemplate))
+  const newTunnel = JSON.parse(stringify(tunnelTemplate))
   newTunnel.id = new Date().getTime().toString()
   tunnels.push(newTunnel)
 }
@@ -351,6 +352,8 @@ const initJob = () => {
           body: '',
         }
         send(msg)
+        const lastTunnel = tunnels.value[tunnels.value.length - 1]
+        lastTunnel.id = new Date().getTime().toString()
       },
       1000,
   )
@@ -390,7 +393,7 @@ const handlePushEvent = async (): Promise<boolean> => {
   if (targetList.length > 0) {
     const msg: Msg = {
       flag: 'NewTunnel',
-      body: JSON.stringify(targetList),
+      body: stringify(targetList),
     }
     send(msg)
   }
@@ -399,7 +402,7 @@ const handlePushEvent = async (): Promise<boolean> => {
   if (targetList.length > 0) {
     const msg: Msg = {
       flag: 'NewReverseTunnel',
-      body: JSON.stringify(targetList),
+      body: stringify(targetList),
     }
     send(msg)
   }
@@ -420,7 +423,7 @@ const saveTunnels = (tunnels: Tunnel[]) => {
   const targetList = tunnels.slice(0, -1)
   const msg: Msg = {
     flag: 'SaveTunnel',
-    body: JSON.stringify(targetList),
+    body: stringify(targetList),
   }
   send(msg)
 }
@@ -435,6 +438,7 @@ td {
 .v-text-success :deep(input) {
   color: #06fc91;
 }
+
 .v-text-warn :deep(input) {
   color: #ff3a3a;
 }
