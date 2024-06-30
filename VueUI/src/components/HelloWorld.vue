@@ -271,6 +271,7 @@ const lastAliveClass = (p: any): string => {
   return clazz
 }
 const logs = ref<{ text: string }[]>([])
+const wd = window as any
 
 /* 回调 */
 onMounted(() => {
@@ -329,6 +330,10 @@ const onMessage = (e: any) => {
           }
         }
       }
+      break
+    case 'SaveTunnel':
+      wd.chrome.webview.postMessage('1')
+      break
   }
 }
 const onError = (e: any) => {
@@ -399,6 +404,7 @@ const handleBtnEvent = async () => {
   }
 }
 const handlePushEvent = async (): Promise<boolean> => {
+  // noinspection ES6RedundantAwait
   const results = await (tunnelForm.value as any).validate()
   if (!results.valid) {
     return false
@@ -445,6 +451,10 @@ const saveTunnels = (tunnels: Tunnel[]) => {
     body: stringify(targetList),
   }
   send(msg)
+}
+wd.beforeClose = () => {
+  saveTunnels(tunnels.value)
+  console.debug(`beforeClose going...`)
 }
 </script>
 
