@@ -21,14 +21,6 @@
               :color="btnCase.color"
               @click.prevent="handleBtnEvent"
           />
-          <v-btn
-              class="mx-3"
-              variant="tonal"
-              density="comfortable"
-              :icon="saveBtn.icon"
-              :color="saveBtn.color"
-              @click.prevent="handleSaveEvent"
-          />
         </v-col>
       </v-row>
     </v-card-actions>
@@ -249,10 +241,6 @@ const stopBtn = {
   icon: 'mdi-stop-circle',
   color: '#ff3a3a',
 }
-const saveBtn = {
-  icon: 'mdi-content-save',
-  color: '#f18a1e',
-}
 const btnCase = ref(pushBtn)
 const job = ref()
 const params = new URLSearchParams(window.location.search)
@@ -440,9 +428,6 @@ const handleStopEvent = (): boolean => {
   }
   send(msg)
   return true
-}
-const handleSaveEvent = () => {
-  saveTunnels(tunnels.value)
 }
 const saveTunnels = (tunnels: Tunnel[]) => {
   const targetList = tunnels.slice(0, -1)
