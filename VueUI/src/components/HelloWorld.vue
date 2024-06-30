@@ -251,8 +251,9 @@ const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
 const webSocket = ref()
 const lastAliveClass = (p: any): string => {
-  let clazz = 'v-text-success'
+  let clazz = ''
   if (btnCase.value.icon === stopBtn.icon) {
+    clazz = 'v-text-success'
     const diff = new Date().getTime() - new Date(p).getTime()
     const diffMi = diff / 1000
     if (diffMi > 20) {
