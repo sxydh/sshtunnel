@@ -21,6 +21,14 @@
               :color="btnCase.color"
               @click.prevent="handleBtnEvent"
           />
+          <v-btn
+              class="mx-3"
+              variant="tonal"
+              density="comfortable"
+              :icon="reloadBtn.icon"
+              :color="reloadBtn.color"
+              @click.prevent="handleBtnEvent"
+          />
         </v-col>
       </v-row>
     </v-card-actions>
@@ -230,6 +238,10 @@ const pushBtn = {
 const stopBtn = {
   icon: 'mdi-stop-circle',
   color: '#ff3a3a',
+}
+const reloadBtn = {
+  icon: 'mdi-reload',
+  color: '#318aff',
 }
 const btnCase = ref(pushBtn)
 const job = ref()
