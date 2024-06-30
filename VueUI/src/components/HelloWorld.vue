@@ -238,6 +238,7 @@ const port = params.get('serverPort')
 const webSocket = new WebSocket(`ws://localhost:${port}`)
 webSocket.onopen = () => {
   console.debug(`WebSocket onopen: port=${port}`)
+  initTunnels()
 }
 webSocket.onmessage = e => {
   console.debug(`WebSocket onmessage`, e)
@@ -251,7 +252,6 @@ webSocket.onclose = e => {
 
 /* 回调 */
 onMounted(() => {
-  initTunnels()
   initLastTunnel(tunnels.value)
 })
 window.onbeforeunload = () => {
