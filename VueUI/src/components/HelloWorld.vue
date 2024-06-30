@@ -128,6 +128,11 @@
         </template>
       </v-data-table>
     </v-form>
+
+    <v-data-table
+        :items="logs"
+        hide-default-header
+    />
   </v-card>
 </template>
 
@@ -262,6 +267,7 @@ const lastAliveClass = (p: any): string => {
   }
   return clazz
 }
+const logs = ref<{ text: string }[]>([])
 
 /* 回调 */
 onMounted(() => {
@@ -299,6 +305,9 @@ const onMessage = (e: any) => {
   console.debug(`WebSocket onmessage`, e)
   const msg: Msg = JSON.parse(e.data)
   switch (msg.flag) {
+    case 'Log':
+      logs.value.unshift({text: msg.body})
+      break
     case 'ListSavedTunnel':
       const savedTunnels: Tunnel[] = JSON.parse(msg.body)
       if (savedTunnels.length > 0) {
