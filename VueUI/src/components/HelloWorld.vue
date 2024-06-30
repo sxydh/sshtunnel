@@ -232,6 +232,7 @@ const stopBtn = {
   color: '#ff3a3a',
 }
 const btnCase = ref(pushBtn)
+const lastAliveJob = ref()
 // WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
@@ -239,15 +240,16 @@ const webSocket = new WebSocket(`ws://localhost:${port}`)
 webSocket.onopen = () => {
   console.debug(`WebSocket onopen: port=${port}`)
   initTunnels()
+  initLastAliveJob()
 }
 webSocket.onmessage = e => {
   console.debug(`WebSocket onmessage`, e)
   const msg: Msg = JSON.parse(e.data)
   switch (msg.flag) {
     case 'ListSavedTunnel':
-      const cachedTunnels: Tunnel[] = JSON.parse(msg.body)
-      if (cachedTunnels.length > 0) {
-        tunnels.value.unshift(...cachedTunnels)
+      const savedTunnels: Tunnel[] = JSON.parse(msg.body)
+      if (savedTunnels.length > 0) {
+        tunnels.value.unshift(...savedTunnels)
       }
       break
   }
@@ -264,12 +266,8 @@ onMounted(() => {
   initLastTunnel(tunnels.value)
 })
 window.onbeforeunload = () => {
-  const targetList = tunnels.value.slice(0, -1)
-  const msg: Msg = {
-    flag: 'SaveTunnel',
-    body: JSON.stringify(targetList),
-  }
-  send(msg)
+  saveTunnels(tunnels.value)
+  clearInterval(lastAliveJob.value)
 }
 
 /* 函数 */
@@ -291,6 +289,18 @@ const initLastTunnel = (tunnels: Tunnel[]) => {
   const newTunnel = JSON.parse(JSON.stringify(tunnelTemplate))
   newTunnel.id = new Date().getTime().toString()
   tunnels.push(newTunnel)
+}
+const initLastAliveJob = () => {
+  lastAliveJob.value = setInterval(
+      () => {
+        const msg: Msg = {
+          flag: 'ListTunnel',
+          body: '',
+        }
+        send(msg)
+      },
+      1000,
+  )
 }
 const handleTrInputEvent = (p: any) => {
   if (p == tunnels.value.length - 1) {
@@ -349,6 +359,14 @@ const handleStopEvent = (): boolean => {
   }
   send(msg)
   return true
+}
+const saveTunnels = (tunnels: Tunnel[]) => {
+  const targetList = tunnels.slice(0, -1)
+  const msg: Msg = {
+    flag: 'SaveTunnel',
+    body: JSON.stringify(targetList),
+  }
+  send(msg)
 }
 </script>
 
