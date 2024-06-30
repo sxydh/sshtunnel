@@ -2,7 +2,7 @@ package main
 
 import "testing"
 
-func TestInitGoServer(t *testing.T) {
+func TestInitWsServer(t *testing.T) {
 	tests := []struct {
 		name string
 	}{
@@ -12,7 +12,7 @@ func TestInitGoServer(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			InitGoServer()
+			InitWsServer()
 			select {}
 		})
 	}
