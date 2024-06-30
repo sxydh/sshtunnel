@@ -17,9 +17,9 @@
               class="mx-3"
               variant="tonal"
               density="comfortable"
-              icon="mdi-send"
-              color="#2DC1DD"
-              @click.prevent="handlePushEvent"
+              :icon="btnCase.icon"
+              :color="btnCase.color"
+              @click.prevent="handleBtnEvent"
           />
         </v-col>
       </v-row>
@@ -223,6 +223,15 @@ const rules = ref({
   },
 })
 const tunnelForm = ref(null)
+const pushBtn = {
+  icon: 'mdi-send',
+  color: '#2DC1DD',
+}
+const stopBtn = {
+  icon: 'mdi-stop-circle',
+  color: '#ff3a3a',
+}
+const btnCase = ref(pushBtn)
 // WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
@@ -262,14 +271,27 @@ const handleTrInputEvent = (p: any) => {
 const handleTrDeleteEvent = (p: any) => {
   tunnels.value.splice(p, 1)
 }
-const handlePushEvent = async () => {
+const handleBtnEvent = async () => {
+  if (btnCase.value === pushBtn) {
+    const pushed = await handlePushEvent()
+    if (pushed) {
+      btnCase.value = stopBtn
+    }
+  } else if (btnCase.value === stopBtn) {
+    const stopped = handleStopEvent()
+    if (stopped) {
+      btnCase.value = pushBtn
+    }
+  }
+}
+const handlePushEvent = async (): Promise<boolean> => {
   const results = await (tunnelForm.value as any).validate()
   if (!results.valid) {
-    return
+    return false
   }
   let list = tunnels.value.slice(0, -1)
   if (list.length === 0) {
-    return
+    return false
   }
   /* 正向 */
   let targetList = list.filter(ele => ele.direction === 1)
@@ -291,6 +313,16 @@ const handlePushEvent = async () => {
     console.debug(`webSocket.send`, msg)
     webSocket.send(JSON.stringify(msg))
   }
+  return true
+}
+const handleStopEvent = (): boolean => {
+  const msg: Msg = {
+    flag: 'StopTunnel',
+    body: '',
+  }
+  console.debug(`webSocket.send`, msg)
+  webSocket.send(JSON.stringify(msg))
+  return true
 }
 </script>
 
