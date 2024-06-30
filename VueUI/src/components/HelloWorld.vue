@@ -54,7 +54,7 @@
             </td>
             <td>
               <v-text-field
-                  v-model="item.sshPort"
+                  v-model.number="item.sshPort"
                   :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
@@ -73,7 +73,7 @@
             </td>
             <td>
               <v-text-field
-                  v-model="item.listenPort"
+                  v-model.number="item.listenPort"
                   :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
@@ -92,7 +92,7 @@
             </td>
             <td>
               <v-text-field
-                  v-model="item.targetPort"
+                  v-model.number="item.targetPort"
                   :rules="[rules.required(index)]"
                   type="number"
                   hide-spin-buttons
