@@ -79,13 +79,14 @@ func InitGoServer() int {
 			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
 			ssh_utils.StopTunnel(&tunnels)
 			tunnels = tunnels[:0]
-			/* 关闭 SSH 隧道 */
+		/* 获取 SSH 隧道列表 */
 		case "ListTunnel":
 			if len(tunnels) > 0 {
 				body := json_utils.ToJsonStr(&tunnels)
 				msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: body})
 				wsServer.Send(conn, msg)
 			}
+		/* 保存 SSH 隧道 */
 		case "SaveTunnel":
 			log.Printf("SaveTunnel: body=%v", msg.Body)
 			file, err := os.OpenFile("sshtunnel.config", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
@@ -97,6 +98,19 @@ func InitGoServer() int {
 				log.Printf("SaveTunnel write error: err=%v", err)
 			}
 			file.Close()
+		/* 获取 SSH 隧道保存列表 */
+		case "ListSavedTunnel":
+			log.Printf("ListSavedTunnel")
+			file, err := os.OpenFile("sshtunnel.config", os.O_CREATE|os.O_RDONLY, os.ModePerm)
+			if err != nil {
+				log.Printf("ListSavedTunnel open file error: err=%v", err)
+			}
+			bytes, err := io.ReadAll(file)
+			if err != nil {
+				log.Printf("ListSavedTunnel read error: err=%v", err)
+			}
+			msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: string(bytes)})
+			wsServer.Send(conn, msg)
 		}
 	}
 	port := wsServer.RandPort()
