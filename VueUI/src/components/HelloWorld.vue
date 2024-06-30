@@ -232,7 +232,7 @@ const stopBtn = {
   color: '#ff3a3a',
 }
 const btnCase = ref(pushBtn)
-const lastAliveJob = ref()
+const job = ref()
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
 const webSocket = ref()
@@ -244,7 +244,7 @@ onMounted(() => {
 })
 window.onbeforeunload = () => {
   saveTunnels(tunnels.value)
-  clearInterval(lastAliveJob.value)
+  clearInterval(job.value)
 }
 
 /* 函数 */
@@ -267,7 +267,7 @@ const initWs = () => {
 const onOpen = () => {
   console.debug(`WebSocket onopen: port=${port}`)
   initTunnels()
-  initLastAliveJob()
+  initJob()
 }
 const onMessage = (e: any) => {
   console.debug(`WebSocket onmessage`, e)
@@ -319,8 +319,8 @@ const initLastTunnel = (tunnels: Tunnel[]) => {
   newTunnel.id = new Date().getTime().toString()
   tunnels.push(newTunnel)
 }
-const initLastAliveJob = () => {
-  lastAliveJob.value = setInterval(
+const initJob = () => {
+  job.value = setInterval(
       () => {
         const msg: Msg = {
           flag: 'ListTunnel',
