@@ -233,25 +233,13 @@ const stopBtn = {
 }
 const btnCase = ref(pushBtn)
 const lastAliveJob = ref()
-// WebSocket
 const params = new URLSearchParams(window.location.search)
 const port = params.get('serverPort')
-const webSocket = new WebSocket(`ws://localhost:${port}`)
-webSocket.onopen = () => {
-  onOpen()
-}
-webSocket.onmessage = e => {
-  onMessage(e)
-}
-webSocket.onerror = e => {
-  onError(e)
-}
-webSocket.onclose = e => {
-  onClose(e)
-}
+const webSocket = ref()
 
 /* 回调 */
 onMounted(() => {
+  initWs()
   initLastTunnel(tunnels.value)
 })
 window.onbeforeunload = () => {
@@ -260,6 +248,22 @@ window.onbeforeunload = () => {
 }
 
 /* 函数 */
+const initWs = () => {
+  const ws = new WebSocket(`ws://localhost:${port}`)
+  ws.onopen = () => {
+    onOpen()
+  }
+  ws.onmessage = e => {
+    onMessage(e)
+  }
+  ws.onerror = e => {
+    onError(e)
+  }
+  ws.onclose = e => {
+    onClose(e)
+  }
+  webSocket.value = ws
+}
 const onOpen = () => {
   console.debug(`WebSocket onopen: port=${port}`)
   initTunnels()
@@ -298,7 +302,7 @@ const onClose = (e: any) => {
 }
 const send = (msg: Msg) => {
   console.debug(`webSocket.send`, msg)
-  webSocket.send(JSON.stringify(msg))
+  webSocket.value.send(JSON.stringify(msg))
 }
 const initTunnels = () => {
   const msg: Msg = {
