@@ -252,6 +252,19 @@ webSocket.onmessage = e => {
         tunnels.value.unshift(...savedTunnels)
       }
       break
+    case 'ListTunnel':
+      const serverTunnels: Tunnel[] = JSON.parse(msg.body)
+      if (serverTunnels.length > 0) {
+        btnCase.value = stopBtn
+        if (tunnels.value.length > 1) {
+          for (const tunnel of tunnels.value) {
+            const serverTunnel = serverTunnels.find(se => se.id === tunnel.id)
+            if (serverTunnel) {
+              tunnel.lastAlive = serverTunnel.lastAlive
+            }
+          }
+        }
+      }
   }
 }
 webSocket.onerror = e => {
