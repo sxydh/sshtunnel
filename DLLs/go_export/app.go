@@ -109,6 +109,7 @@ func InitGoServer() int {
 			if err != nil {
 				log.Printf("ListSavedTunnel read error: err=%v", err)
 			}
+			file.Close()
 			msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: string(bytes)})
 			wsServer.Send(conn, msg)
 		}
