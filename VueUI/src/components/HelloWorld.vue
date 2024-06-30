@@ -372,7 +372,7 @@ const initJob = () => {
         send(msg)
         // 用于触发表格计算样式
         const lastTunnel = tunnels.value[tunnels.value.length - 1]
-        lastTunnel.lastAlive = new Date().toISOString()
+        lastTunnel.lastAlive = new Date().toISOString().replace('T', ' ')
       },
       1000,
   )
