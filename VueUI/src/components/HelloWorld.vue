@@ -328,7 +328,11 @@ const onClose = (e: any) => {
 }
 const send = (msg: Msg) => {
   console.debug(`webSocket.send`, msg)
-  webSocket.value.send(stringify(msg))
+  try {
+    webSocket.value.send(stringify(msg))
+  } catch (e) {
+    initWs()
+  }
 }
 const initTunnels = () => {
   const msg: Msg = {
