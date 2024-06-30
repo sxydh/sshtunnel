@@ -14,6 +14,7 @@ namespace sshtunnel
         public Form1()
         {
             BackColor = ColorTranslator.FromHtml("#212121");
+            StartPosition = FormStartPosition.CenterScreen;
 
             fsPort = InitFsServer();
             wsPort = InitWsServer();
