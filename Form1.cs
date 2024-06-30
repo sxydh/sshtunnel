@@ -1,4 +1,5 @@
 ﻿using Microsoft.Web.WebView2.Core;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace sshtunnel
@@ -12,6 +13,8 @@ namespace sshtunnel
 
         public Form1()
         {
+            BackColor = ColorTranslator.FromHtml("#212121");
+
             fsPort = InitFsServer();
             wsPort = InitWsServer();
             InitializeComponent();
