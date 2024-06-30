@@ -102,6 +102,8 @@ func InitWsServer() int {
 				log.Printf("SaveTunnel write error: err=%v", err)
 			}
 			file.Close()
+			msg := json_utils.ToJsonStr(&Msg{Flag: msg.Flag, Body: "1"})
+			wsServer.Send(conn, msg)
 		/* 获取 SSH 隧道保存列表 */
 		case "ListSavedTunnel":
 			log.Printf("ListSavedTunnel")
