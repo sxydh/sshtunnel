@@ -242,6 +242,15 @@ webSocket.onopen = () => {
 }
 webSocket.onmessage = e => {
   console.debug(`WebSocket onmessage`, e)
+  const msg: Msg = JSON.parse(e.data)
+  switch (msg.flag) {
+    case 'ListSavedTunnel':
+      const cachedTunnels: Tunnel[] = JSON.parse(msg.body)
+      if (cachedTunnels.length > 0) {
+        tunnels.value.unshift(...cachedTunnels)
+      }
+      break
+  }
 }
 webSocket.onerror = e => {
   console.debug(`WebSocket onerror`, e)
