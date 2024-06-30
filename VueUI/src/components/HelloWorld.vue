@@ -38,6 +38,7 @@
           :headers="headers"
           :items="tunnels"
           hide-default-footer
+          class="tunnel-table"
       >
         <template v-slot:item="{ item, index }">
           <tr @input="handleTrInputEvent(index)">
@@ -132,6 +133,8 @@
     <v-data-table
         :items="logs"
         hide-default-header
+        hide-default-footer
+        class="log-table"
     />
   </v-card>
 </template>
@@ -447,9 +450,13 @@ const saveTunnels = (tunnels: Tunnel[]) => {
 </script>
 
 <style scoped>
-td {
+.tunnel-table td {
   text-align: center;
   padding: 5px 10px !important;
+}
+
+.log-table :deep(td) {
+  color: #adadad;
 }
 
 .v-text-success :deep(input) {
