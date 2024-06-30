@@ -10,5 +10,4 @@ export interface Tunnel {
     status: number | null
     delete: number | null
     lastAlive: string | null
-    _tmp: string | null
 }

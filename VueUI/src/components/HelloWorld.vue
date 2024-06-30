@@ -372,7 +372,7 @@ const initJob = () => {
         send(msg)
         // 用于触发表格计算样式
         const lastTunnel = tunnels.value[tunnels.value.length - 1]
-        lastTunnel._tmp = new Date().getTime().toString()
+        lastTunnel.lastAlive = new Date().toISOString()
       },
       1000,
   )
@@ -450,6 +450,7 @@ const saveTunnels = (tunnels: Tunnel[]) => {
 
 <style scoped>
 .tunnel-table :deep(td) {
+  text-align: center;
   padding: 5px 10px !important;
 }
 
