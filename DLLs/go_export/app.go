@@ -79,7 +79,7 @@ func InitGoServer() int {
 			log.Printf("NewReverseTunnel: tunnels.len=%v", len(tunnels))
 			ssh_utils.StopTunnel(&tunnels)
 			tunnels = tunnels[:0]
-		/* 关闭 SSH 隧道 */
+		/* 获取 SSH 隧道列表 */
 		case "ListTunnel":
 			if len(tunnels) > 0 {
 				body := json_utils.ToJsonStr(&tunnels)
