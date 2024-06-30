@@ -36,7 +36,7 @@ namespace sshtunnel
         private void WebMessageReceived(object sender, CoreWebView2WebMessageReceivedEventArgs e)
         {
             var msg = e.TryGetWebMessageAsString();
-            if (msg != null)
+            if (msg == "1")
             {
                 closeFlag = 1;
                 Close();
