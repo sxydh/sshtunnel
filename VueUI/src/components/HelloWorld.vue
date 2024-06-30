@@ -451,7 +451,6 @@ const saveTunnels = (tunnels: Tunnel[]) => {
 
 <style scoped>
 .tunnel-table :deep(td) {
-  text-align: center;
   padding: 5px 10px !important;
 }
 
