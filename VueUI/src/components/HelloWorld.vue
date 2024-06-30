@@ -347,11 +347,13 @@ const initLastTunnel = (tunnels: Tunnel[]) => {
 const initJob = () => {
   job.value = setInterval(
       () => {
+        // 用于更新最后存活时间
         const msg: Msg = {
           flag: 'ListTunnel',
           body: '',
         }
         send(msg)
+        // 用于触发表格计算样式
         const lastTunnel = tunnels.value[tunnels.value.length - 1]
         lastTunnel.id = new Date().getTime().toString()
       },
