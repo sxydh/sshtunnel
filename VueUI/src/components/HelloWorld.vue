@@ -331,6 +331,7 @@ const send = (msg: Msg) => {
   try {
     webSocket.value.send(stringify(msg))
   } catch (e) {
+    console.error(`webSocket.send`, e)
     initWs()
   }
 }
