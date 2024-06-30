@@ -27,7 +27,7 @@
               density="comfortable"
               :icon="reloadBtn.icon"
               :color="reloadBtn.color"
-              @click.prevent="handleBtnEvent"
+              @click.prevent="handleReloadEvent"
           />
         </v-col>
       </v-row>
@@ -400,6 +400,9 @@ const handleStopEvent = (): boolean => {
   }
   send(msg)
   return true
+}
+const handleReloadEvent = () => {
+  location.reload()
 }
 const saveTunnels = (tunnels: Tunnel[]) => {
   const targetList = tunnels.slice(0, -1)
