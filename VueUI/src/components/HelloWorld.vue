@@ -251,10 +251,30 @@ webSocket.onclose = e => {
 
 /* 回调 */
 onMounted(() => {
+  initTunnels()
   initLastTunnel(tunnels.value)
 })
+window.onbeforeunload = () => {
+  const targetList = tunnels.value.slice(0, -1)
+  const msg: Msg = {
+    flag: 'SaveTunnel',
+    body: JSON.stringify(targetList),
+  }
+  send(msg)
+}
 
 /* 函数 */
+const send = (msg: Msg) => {
+  console.debug(`webSocket.send`, msg)
+  webSocket.send(JSON.stringify(msg))
+}
+const initTunnels = () => {
+  const msg: Msg = {
+    flag: 'ListSavedTunnel',
+    body: '',
+  }
+  send(msg)
+}
 const initLastTunnel = (tunnels: Tunnel[]) => {
   if (tunnels.length != 0 && ifEqual(tunnels[tunnels.length - 1], tunnelTemplate, ['id'])) {
     return
@@ -300,8 +320,7 @@ const handlePushEvent = async (): Promise<boolean> => {
       flag: 'NewTunnel',
       body: JSON.stringify(targetList),
     }
-    console.debug(`webSocket.send`, msg)
-    webSocket.send(JSON.stringify(msg))
+    send(msg)
   }
   /* 反向 */
   targetList = list.filter(ele => ele.direction === -1)
@@ -310,8 +329,7 @@ const handlePushEvent = async (): Promise<boolean> => {
       flag: 'NewReverseTunnel',
       body: JSON.stringify(targetList),
     }
-    console.debug(`webSocket.send`, msg)
-    webSocket.send(JSON.stringify(msg))
+    send(msg)
   }
   return true
 }
@@ -320,8 +338,7 @@ const handleStopEvent = (): boolean => {
     flag: 'StopTunnel',
     body: '',
   }
-  console.debug(`webSocket.send`, msg)
-  webSocket.send(JSON.stringify(msg))
+  send(msg)
   return true
 }
 </script>
