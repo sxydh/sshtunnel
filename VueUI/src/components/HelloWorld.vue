@@ -301,12 +301,12 @@ const handleTrDeleteEvent = (p: any) => {
   tunnels.value.splice(p, 1)
 }
 const handleBtnEvent = async () => {
-  if (btnCase.value === pushBtn) {
+  if (btnCase.value.icon === pushBtn.icon) {
     const pushed = await handlePushEvent()
     if (pushed) {
       btnCase.value = stopBtn
     }
-  } else if (btnCase.value === stopBtn) {
+  } else if (btnCase.value.icon === stopBtn.icon) {
     const stopped = handleStopEvent()
     if (stopped) {
       btnCase.value = pushBtn
