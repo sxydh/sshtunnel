@@ -45,7 +45,7 @@ namespace poweredby_winform.Forms
             fileHelper.W(JsonConvert.SerializeObject(tl));
         }
 
-        [DllImport("go_export.dll")]
+        [DllImport("tcp_server.dll")]
         public static extern int InitGoServer();
     }
 }
