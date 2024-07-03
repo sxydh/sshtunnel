@@ -1,4 +1,5 @@
-﻿using System;
+﻿using poweredby_winform.Forms;
+using System;
 using System.Windows.Forms;
 
 namespace poweredby_winform
@@ -15,7 +16,7 @@ namespace poweredby_winform
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
